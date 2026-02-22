@@ -3,198 +3,158 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cronos 7 | Dev Hub & OS</title>
+    <title>Cronos 7 | Global Network</title>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
     <style>
-        :root {
-            --primary: #00a2ff;
-            --bg: #050505;
-            --panel: #111;
-            --text: #ffffff;
-            --border: #222;
-        }
-
-        /* MODO CLARO (CONFIGURAÇÃO) */
-        body.light-mode {
-            --bg: #f0f2f5;
-            --panel: #ffffff;
-            --text: #1c1e21;
-            --border: #ddd;
-        }
-
+        :root { --primary: #00a2ff; --bg: #050505; --panel: #111; --text: #fff; --border: #222; }
+        body.light-mode { --bg: #f0f2f5; --panel: #fff; --text: #111; --border: #ddd; }
         body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; margin: 0; transition: 0.3s; }
         .hidden { display: none !important; }
 
-        /* TELA DE LOGIN */
-        .auth-screen { height: 100vh; display: flex; justify-content: center; align-items: center; }
-        .auth-box { background: var(--panel); padding: 40px; border-radius: 15px; border: 1px solid var(--border); width: 320px; text-align: center; }
+        /* AUTH SCREEN */
+        .auth-container { height: 100vh; display: flex; justify-content: center; align-items: center; }
+        .auth-box { background: var(--panel); padding: 30px; border-radius: 15px; border: 1px solid var(--border); width: 100%; max-width: 350px; text-align: center; }
         
-        /* MENU LATERAL */
-        .main-layout { display: grid; grid-template-columns: 250px 1fr; height: 100vh; }
-        .sidebar { background: var(--panel); border-right: 1px solid var(--border); padding: 20px; display: flex; flex-direction: column; }
-        .nav-item { padding: 12px; margin: 5px 0; border-radius: 8px; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 10px; }
-        .nav-item:hover { background: var(--primary); color: white; }
-        .active { background: var(--primary); color: white; }
-
-        /* ÁREA DE CONTEÚDO */
-        .content { padding: 30px; overflow-y: auto; text-align: left; }
-        input, textarea, select { width: 100%; padding: 12px; margin: 10px 0; background: #000; border: 1px solid #333; color: white; border-radius: 6px; box-sizing: border-box; }
+        input { width: 100%; padding: 12px; margin: 10px 0; background: #000; border: 1px solid #333; color: white; border-radius: 6px; box-sizing: border-box; }
         body.light-mode input { background: #fff; border: 1px solid #ccc; color: #000; }
-        button { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; }
+        
+        button { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        .switch-auth { font-size: 12px; color: var(--primary); cursor: pointer; margin-top: 15px; display: block; }
 
-        /* GRIDS */
-        .project-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; margin-top: 20px; }
-        .card { background: var(--panel); border: 1px solid var(--border); padding: 15px; border-radius: 10px; }
-        .avatar-big { width: 80px; height: 80px; background: var(--primary); border-radius: 50%; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; font-size: 30px; }
+        /* DASHBOARD */
+        .main-layout { display: grid; grid-template-columns: 250px 1fr; height: 100vh; }
+        .sidebar { background: var(--panel); border-right: 1px solid var(--border); padding: 20px; }
+        .content { padding: 40px; overflow-y: auto; text-align: left; }
+        .tab { animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body id="body">
 
-    <div id="auth-screen" class="auth-screen">
+    <div id="auth-screen" class="auth-container">
         <div class="auth-box">
-            <h1>CRONOS <span style="color: var(--primary);">7</span></h1>
-            <input type="text" id="reg-user" placeholder="Nome de Usuário">
-            <input type="password" placeholder="Senha">
-            <button onclick="login()">ENTRAR / CADASTRAR</button>
+            <h1 id="auth-title">CRIAR CONTA</h1>
+            <p id="auth-subtitle" style="font-size: 14px; color: #666;">Junte-se ao Cronos 7</p>
+            
+            <input type="text" id="user-name-input" placeholder="Nome de Usuário">
+            <input type="email" id="email-input" placeholder="Seu melhor E-mail">
+            <input type="password" id="pass-input" placeholder="Senha (mín. 6 caracteres)">
+            
+            <button id="auth-btn" onclick="handleAuth()">CADASTRAR</button>
+            <span class="switch-auth" id="toggle-auth" onclick="toggleAuthMode()">Já tem conta? Fazer Login</span>
         </div>
     </div>
 
     <div id="app-screen" class="main-layout hidden">
-        
         <div class="sidebar">
-            <h2 style="margin-bottom: 30px;">CRONOS 7</h2>
-            <div class="nav-item active" onclick="showTab('home')">🏠 Início / Feed</div>
-            <div class="nav-item" onclick="showTab('profile')">👤 Meu Perfil</div>
-            <div class="nav-item" onclick="showTab('create')">➕ Criar Novo</div>
-            <div class="nav-item" onclick="showTab('settings')">⚙️ Configurações</div>
-            <button style="margin-top: auto; background: #ff4444;" onclick="logout()">Sair</button>
+            <h2 style="color: var(--primary);">CRONOS 7</h2>
+            <p id="nav-user" style="font-size: 14px; font-weight: bold;">@user</p>
+            <hr style="border: 0; border-top: 1px solid var(--border); margin: 20px 0;">
+            <div onclick="showTab('home')" style="cursor:pointer; margin: 10px 0;">🏠 Feed Global</div>
+            <div onclick="showTab('profile')" style="cursor:pointer; margin: 10px 0;">👤 Meu Perfil</div>
+            <div onclick="showTab('settings')" style="cursor:pointer; margin: 10px 0;">⚙️ Configurações</div>
+            <button onclick="logout()" style="background: #ff4444; margin-top: 50px;">Sair</button>
         </div>
 
         <div class="content">
-            
             <div id="tab-home" class="tab">
                 <h1>Feed da Comunidade</h1>
-                <div class="project-grid" id="global-feed">
-                    <div class="card"><b>@Mishk19000</b><br><small>Roblox Script</small><p>Novo sistema de inventário!</p></div>
-                </div>
+                <p>Aqui aparecerão os projetos de todos os usuários cadastrados.</p>
             </div>
 
             <div id="tab-profile" class="tab hidden">
-                <div class="avatar-big" id="profile-initial">M</div>
-                <h1 id="profile-name">Nome do Usuário</h1>
-                <p id="profile-bio">Sem bio definida.</p>
-                <hr style="border: var(--border);">
-                <h3>Meus Projetos (Sites, Jogos, Apps)</h3>
-                <div class="project-grid" id="my-projects">
-                    </div>
-            </div>
-
-            <div id="tab-create" class="tab hidden">
-                <h1>Criar Novo Projeto</h1>
-                <label>O que você quer criar?</label>
-                <select id="proj-type">
-                    <option value="Jogo (Roblox)">Jogo (Roblox)</option>
-                    <option value="Site (HTML)">Site (HTML)</option>
-                    <option value="App (Python)">App (Python)</option>
-                </select>
-                <input type="text" id="proj-title" placeholder="Nome do Projeto">
-                <textarea id="proj-code" rows="5" placeholder="Digite seu código ou descrição aqui..."></textarea>
-                <button onclick="publishProject()">PUBLICAR NO PERFIL</button>
+                <h1 id="display-name">Carregando...</h1>
+                <p id="display-email" style="color: var(--primary);"></p>
+                <div style="background: var(--panel); padding: 20px; border: 1px solid var(--border); border-radius: 10px;">
+                    <h3>Meus Projetos</h3>
+                    <p style="font-size: 14px; color: #666;">Ainda não tens projetos publicados.</p>
+                </div>
             </div>
 
             <div id="tab-settings" class="tab hidden">
                 <h1>Configurações</h1>
-                <label>Tema do Sistema</label>
-                <button onclick="toggleTheme()" style="background: #555;">Alternar Modo Claro/Escuro</button>
-                <br><br>
-                <label>Editar Bio do Perfil</label>
-                <input type="text" id="new-bio" placeholder="Escreva sobre você...">
-                <button onclick="updateBio()">Atualizar Bio</button>
+                <button onclick="document.getElementById('body').classList.toggle('light-mode')">Mudar Tema (Claro/Escuro)</button>
             </div>
-
         </div>
     </div>
 
     <script>
-        // Lógica de Login e Memória
-        function login() {
-            const user = document.getElementById('reg-user').value;
-            if(user.length < 2) return alert("Digite um nome!");
-            
-            localStorage.setItem('currentUser', user);
-            document.getElementById('auth-screen').classList.add('hidden');
-            document.getElementById('app-screen').classList.remove('hidden');
-            
-            updateUI();
+        // CONFIGURAÇÃO DO FIREBASE (Miguel, substitui isto pelo que copiares do teu painel)
+        const firebaseConfig = {
+            apiKey: "COLA_AQUI_A_TUA_API_KEY",
+            authDomain: "cronos7.firebaseapp.com",
+            projectId: "cronos7",
+            storageBucket: "cronos7.appspot.com",
+            messagingSenderId: "0000000000",
+            appId: "1:00000000:web:000000"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        let isLoginMode = false;
+
+        function toggleAuthMode() {
+            isLoginMode = !isLoginMode;
+            document.getElementById('auth-title').innerText = isLoginMode ? "LOGIN" : "CRIAR CONTA";
+            document.getElementById('auth-btn').innerText = isLoginMode ? "ENTRAR" : "CADASTRAR";
+            document.getElementById('user-name-input').classList.toggle('hidden', isLoginMode);
+            document.getElementById('toggle-auth').innerText = isLoginMode ? "Não tem conta? Cadastre-se" : "Já tem conta? Fazer Login";
         }
 
-        function logout() {
-            localStorage.removeItem('currentUser');
-            location.reload();
+        async function handleAuth() {
+            const email = document.getElementById('email-input').value;
+            const pass = document.getElementById('pass-input').value;
+            const name = document.getElementById('user-name-input').value;
+
+            try {
+                if (isLoginMode) {
+                    await auth.signInWithEmailAndPassword(email, pass);
+                } else {
+                    const res = await auth.createUserWithEmailAndPassword(email, pass);
+                    // Salva o nome do usuário no banco de dados
+                    await db.collection('users').doc(res.user.uid).set({
+                        name: name,
+                        email: email,
+                        bio: "Dev iniciante no Cronos 7"
+                    });
+                }
+            } catch (error) {
+                alert("Erro: " + error.message);
+            }
         }
 
-        function updateUI() {
-            const user = localStorage.getItem('currentUser');
-            document.getElementById('profile-name').innerText = user;
-            document.getElementById('profile-initial').innerText = user.charAt(0).toUpperCase();
-            loadMyProjects();
+        // Observador de Login (Fica de olho se o usuário está logado)
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                document.getElementById('auth-screen').classList.add('hidden');
+                document.getElementById('app-screen').classList.remove('hidden');
+                loadUserData(user.uid);
+            } else {
+                document.getElementById('auth-screen').classList.remove('hidden');
+                document.getElementById('app-screen').classList.add('hidden');
+            }
+        });
+
+        async function loadUserData(uid) {
+            const doc = await db.collection('users').doc(uid).get();
+            if (doc.exists) {
+                const data = doc.data();
+                document.getElementById('nav-user').innerText = "@" + data.name;
+                document.getElementById('display-name').innerText = data.name;
+                document.getElementById('display-email').innerText = data.email;
+            }
         }
 
-        // Troca de Abas
-        function showTab(tabName) {
+        function showTab(name) {
             document.querySelectorAll('.tab').forEach(t => t.classList.add('hidden'));
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            
-            document.getElementById('tab-' + tabName).classList.remove('hidden');
-            event.currentTarget.classList.add('active');
+            document.getElementById('tab-' + name).classList.remove('hidden');
         }
 
-        // Publicar Projeto
-        function publishProject() {
-            const type = document.getElementById('proj-type').value;
-            const title = document.getElementById('proj-title').value;
-            const user = localStorage.getItem('currentUser');
-
-            if(!title) return alert("Dê um nome ao projeto!");
-
-            const project = { user, type, title };
-            let projects = JSON.parse(localStorage.getItem('cronos_projects') || "[]");
-            projects.unshift(project);
-            localStorage.setItem('cronos_projects', JSON.stringify(projects));
-
-            alert("Publicado com sucesso!");
-            showTab('profile');
-            loadMyProjects();
-        }
-
-        // Carregar Projetos no Perfil
-        function loadMyProjects() {
-            const user = localStorage.getItem('currentUser');
-            const grid = document.getElementById('my-projects');
-            let projects = JSON.parse(localStorage.getItem('cronos_projects') || "[]");
-            
-            grid.innerHTML = "";
-            projects.filter(p => p.user === user).forEach(p => {
-                grid.innerHTML += `<div class="card"><strong>${p.title}</strong><br><small>${p.type}</small></div>`;
-            });
-        }
-
-        // Configurações
-        function toggleTheme() {
-            document.getElementById('body').classList.toggle('light-mode');
-        }
-
-        function updateBio() {
-            const bio = document.getElementById('new-bio').value;
-            document.getElementById('profile-bio').innerText = bio;
-            alert("Bio atualizada!");
-        }
-
-        // Auto-login se já tiver conta
-        if(localStorage.getItem('currentUser')) {
-            document.getElementById('auth-screen').classList.add('hidden');
-            document.getElementById('app-screen').classList.remove('hidden');
-            updateUI();
-        }
+        function logout() { auth.signOut(); }
     </script>
 </body>
 </html>
