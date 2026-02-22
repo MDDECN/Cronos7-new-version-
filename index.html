@@ -3,226 +3,197 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <meta name="google-site-verification" content="sSd18X-N2QfQif6989EZpVW29j8-zHF2vHswEXJ5Ask" />
-    <meta name="google-site-verification" content="google092df57e55a7cdc3.html" />
-
-    <title>Cronos 7 | Multi-Creator Hub</title>
-    
+    <title>Cronos 7 | Dev Hub & OS</title>
     <style>
         :root {
-            --blue: #00a2ff;
-            --purple: #8000ff;
+            --primary: #00a2ff;
             --bg: #050505;
-            --panel: #111111;
-            --border: #222222;
+            --panel: #111;
+            --text: #ffffff;
+            --border: #222;
         }
 
-        body {
-            background-color: var(--bg);
-            color: white;
-            font-family: 'Segoe UI', sans-serif;
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
+        /* MODO CLARO (CONFIGURAÇÃO) */
+        body.light-mode {
+            --bg: #f0f2f5;
+            --panel: #ffffff;
+            --text: #1c1e21;
+            --border: #ddd;
         }
 
-        .container {
-            background: var(--panel);
-            padding: 30px;
-            border-radius: 12px;
-            border: 1px solid var(--border);
-            width: 90%;
-            max-width: 500px;
-            text-align: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
-        }
+        body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; margin: 0; transition: 0.3s; }
+        .hidden { display: none !important; }
 
-        h1 { font-size: 28px; margin-bottom: 5px; }
-        .tagline { color: #666; font-size: 13px; margin-bottom: 25px; }
-
-        /* BOTÕES DAS OPÇÕES */
-        .menu-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 12px;
-        }
-
-        .opt-btn {
-            background: #1a1a1a;
-            border: 1px solid #333;
-            color: white;
-            padding: 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            text-align: left;
-            transition: 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .opt-btn:hover {
-            border-color: var(--blue);
-            background: #222;
-            transform: scale(1.02);
-        }
-
-        .opt-btn i { font-size: 24px; }
-
-        /* EDITOR (ESCONDIDO INICIALMENTE) */
-        #editor-ui {
-            display: none;
-            width: 98vw;
-            height: 95vh;
-            grid-template-columns: 240px 1fr;
-            gap: 10px;
-        }
-
-        .sidebar { background: var(--panel); border: 1px solid var(--border); padding: 15px; border-radius: 8px; }
+        /* TELA DE LOGIN */
+        .auth-screen { height: 100vh; display: flex; justify-content: center; align-items: center; }
+        .auth-box { background: var(--panel); padding: 40px; border-radius: 15px; border: 1px solid var(--border); width: 320px; text-align: center; }
         
-        textarea {
-            width: 100%;
-            height: 100%;
-            background: #000;
-            color: #dcdcaa;
-            font-family: 'Consolas', monospace;
-            padding: 20px;
-            border: 1px solid var(--blue);
-            border-radius: 8px;
-            resize: none;
-            outline: none;
-            box-sizing: border-box;
-        }
+        /* MENU LATERAL */
+        .main-layout { display: grid; grid-template-columns: 250px 1fr; height: 100vh; }
+        .sidebar { background: var(--panel); border-right: 1px solid var(--border); padding: 20px; display: flex; flex-direction: column; }
+        .nav-item { padding: 12px; margin: 5px 0; border-radius: 8px; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 10px; }
+        .nav-item:hover { background: var(--primary); color: white; }
+        .active { background: var(--primary); color: white; }
 
-        .hidden { display: none; }
-        button.action-btn {
-            width: 100%;
-            padding: 12px;
-            margin-top: 10px;
-            border-radius: 5px;
-            border: none;
-            font-weight: bold;
-            cursor: pointer;
-        }
+        /* ÁREA DE CONTEÚDO */
+        .content { padding: 30px; overflow-y: auto; text-align: left; }
+        input, textarea, select { width: 100%; padding: 12px; margin: 10px 0; background: #000; border: 1px solid #333; color: white; border-radius: 6px; box-sizing: border-box; }
+        body.light-mode input { background: #fff; border: 1px solid #ccc; color: #000; }
+        button { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; }
 
-        .btn-blue { background: var(--blue); color: white; }
-        .btn-green { background: #28a745; color: white; }
+        /* GRIDS */
+        .project-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; margin-top: 20px; }
+        .card { background: var(--panel); border: 1px solid var(--border); padding: 15px; border-radius: 10px; }
+        .avatar-big { width: 80px; height: 80px; background: var(--primary); border-radius: 50%; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; font-size: 30px; }
     </style>
 </head>
-<body>
+<body id="body">
 
-    <div id="hub-menu" class="container">
-        <h1>CRONOS <span style="color: var(--blue);">7</span></h1>
-        <p class="tagline">Selecione seu ambiente de trabalho</p>
-        
-        <div class="menu-grid">
-            <div class="opt-btn" onclick="openStudio('html')">
-                <span>🌐</span>
-                <div>
-                    <strong>Web Builder</strong><br>
-                    <small>Crie sites em HTML/CSS</small>
-                </div>
-            </div>
-
-            <div class="opt-btn" onclick="openStudio('python')">
-                <span>🐍</span>
-                <div>
-                    <strong>Python Studio</strong><br>
-                    <small>Scripts e Lógica</small>
-                </div>
-            </div>
-
-            <div class="opt-btn" onclick="openStudio('roblox')">
-                <span>🎮</span>
-                <div>
-                    <strong>Roblox Cloud Studio</strong><br>
-                    <small>Desenvolva para o Roblox</small>
-                </div>
-            </div>
+    <div id="auth-screen" class="auth-screen">
+        <div class="auth-box">
+            <h1>CRONOS <span style="color: var(--primary);">7</span></h1>
+            <input type="text" id="reg-user" placeholder="Nome de Usuário">
+            <input type="password" placeholder="Senha">
+            <button onclick="login()">ENTRAR / CADASTRAR</button>
         </div>
-        <p style="margin-top: 20px; font-size: 10px; color: #444;">Developer: Miguel Saldanha</p>
     </div>
 
-    <div id="editor-ui">
+    <div id="app-screen" class="main-layout hidden">
+        
         <div class="sidebar">
-            <h2 id="mode-title" style="font-size: 18px; color: var(--blue);">Editor</h2>
-            <p id="mode-desc" style="font-size: 12px; color: #888;"></p>
-            
-            <div style="margin-top: 20px;">
-                <button class="action-btn btn-green" onclick="saveFile()">💾 SALVAR / DOWNLOAD</button>
-                <button class="action-btn btn-blue" onclick="runPreview()">▶ EXECUTAR</button>
-                <button class="action-btn" style="background: #444; color: white;" onclick="backToMenu()">⬅ VOLTAR</button>
-            </div>
+            <h2 style="margin-bottom: 30px;">CRONOS 7</h2>
+            <div class="nav-item active" onclick="showTab('home')">🏠 Início / Feed</div>
+            <div class="nav-item" onclick="showTab('profile')">👤 Meu Perfil</div>
+            <div class="nav-item" onclick="showTab('create')">➕ Criar Novo</div>
+            <div class="nav-item" onclick="showTab('settings')">⚙️ Configurações</div>
+            <button style="margin-top: auto; background: #ff4444;" onclick="logout()">Sair</button>
         </div>
 
-        <div style="display: flex; flex-direction: column; gap: 10px;">
-            <textarea id="main-editor" spellcheck="false"></textarea>
-            <div id="console" style="background: #111; padding: 10px; height: 100px; border-radius: 8px; font-family: monospace; font-size: 12px; color: #00ff00; overflow-y: auto;">
-                > Console Ready...
+        <div class="content">
+            
+            <div id="tab-home" class="tab">
+                <h1>Feed da Comunidade</h1>
+                <div class="project-grid" id="global-feed">
+                    <div class="card"><b>@Mishk19000</b><br><small>Roblox Script</small><p>Novo sistema de inventário!</p></div>
+                </div>
             </div>
+
+            <div id="tab-profile" class="tab hidden">
+                <div class="avatar-big" id="profile-initial">M</div>
+                <h1 id="profile-name">Nome do Usuário</h1>
+                <p id="profile-bio">Sem bio definida.</p>
+                <hr style="border: var(--border);">
+                <h3>Meus Projetos (Sites, Jogos, Apps)</h3>
+                <div class="project-grid" id="my-projects">
+                    </div>
+            </div>
+
+            <div id="tab-create" class="tab hidden">
+                <h1>Criar Novo Projeto</h1>
+                <label>O que você quer criar?</label>
+                <select id="proj-type">
+                    <option value="Jogo (Roblox)">Jogo (Roblox)</option>
+                    <option value="Site (HTML)">Site (HTML)</option>
+                    <option value="App (Python)">App (Python)</option>
+                </select>
+                <input type="text" id="proj-title" placeholder="Nome do Projeto">
+                <textarea id="proj-code" rows="5" placeholder="Digite seu código ou descrição aqui..."></textarea>
+                <button onclick="publishProject()">PUBLICAR NO PERFIL</button>
+            </div>
+
+            <div id="tab-settings" class="tab hidden">
+                <h1>Configurações</h1>
+                <label>Tema do Sistema</label>
+                <button onclick="toggleTheme()" style="background: #555;">Alternar Modo Claro/Escuro</button>
+                <br><br>
+                <label>Editar Bio do Perfil</label>
+                <input type="text" id="new-bio" placeholder="Escreva sobre você...">
+                <button onclick="updateBio()">Atualizar Bio</button>
+            </div>
+
         </div>
     </div>
 
     <script>
-        let currentMode = '';
-
-        function openStudio(mode) {
-            currentMode = mode;
-            document.getElementById('hub-menu').classList.add('hidden');
-            document.getElementById('editor-ui').style.display = 'grid';
+        // Lógica de Login e Memória
+        function login() {
+            const user = document.getElementById('reg-user').value;
+            if(user.length < 2) return alert("Digite um nome!");
             
-            const title = document.getElementById('mode-title');
-            const desc = document.getElementById('mode-desc');
-            const editor = document.getElementById('main-editor');
-
-            if(mode === 'html') {
-                title.innerText = "Web Builder";
-                desc.innerText = "Editando index.html";
-                editor.value = "<html>\n<body>\n  <h1>Olá Mundo!</h1>\n</body>\n</html>";
-            } else if(mode === 'python') {
-                title.innerText = "Python Studio";
-                desc.innerText = "Editando script.py";
-                editor.value = "print('Olá do Cronos 7 Python!')";
-            } else {
-                title.innerText = "Roblox Cloud";
-                desc.innerText = "Editando MainScript.lua";
-                editor.value = "-- Roblox Lua Script\nprint('Executando no Roblox...')";
-            }
+            localStorage.setItem('currentUser', user);
+            document.getElementById('auth-screen').classList.add('hidden');
+            document.getElementById('app-screen').classList.remove('hidden');
+            
+            updateUI();
         }
 
-        function backToMenu() {
-            document.getElementById('editor-ui').style.display = 'none';
-            document.getElementById('hub-menu').classList.remove('hidden');
+        function logout() {
+            localStorage.removeItem('currentUser');
+            location.reload();
         }
 
-        function saveFile() {
-            const text = document.getElementById('main-editor').value;
-            const ext = currentMode === 'html' ? '.html' : (currentMode === 'python' ? '.py' : '.lua');
-            const blob = new Blob([text], { type: 'text/plain' });
-            const a = document.createElement('a');
-            a.download = "projeto_cronos" + ext;
-            a.href = window.URL.createObjectURL(blob);
-            a.click();
-            logConsole("Arquivo baixado: projeto_cronos" + ext);
+        function updateUI() {
+            const user = localStorage.getItem('currentUser');
+            document.getElementById('profile-name').innerText = user;
+            document.getElementById('profile-initial').innerText = user.charAt(0).toUpperCase();
+            loadMyProjects();
         }
 
-        function runPreview() {
-            logConsole("Executando pré-visualização...");
-            if(currentMode === 'html') {
-                const win = window.open();
-                win.document.write(document.getElementById('main-editor').value);
-            } else {
-                alert("Simulação de execução iniciada para " + currentMode);
-            }
+        // Troca de Abas
+        function showTab(tabName) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.add('hidden'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            
+            document.getElementById('tab-' + tabName).classList.remove('hidden');
+            event.currentTarget.classList.add('active');
         }
 
-        function logConsole(msg) {
-            const con = document.getElementById('console');
-            con.innerHTML += "<br>> " + msg;
-            con.scrollTop = con.scrollHeight;
+        // Publicar Projeto
+        function publishProject() {
+            const type = document.getElementById('proj-type').value;
+            const title = document.getElementById('proj-title').value;
+            const user = localStorage.getItem('currentUser');
+
+            if(!title) return alert("Dê um nome ao projeto!");
+
+            const project = { user, type, title };
+            let projects = JSON.parse(localStorage.getItem('cronos_projects') || "[]");
+            projects.unshift(project);
+            localStorage.setItem('cronos_projects', JSON.stringify(projects));
+
+            alert("Publicado com sucesso!");
+            showTab('profile');
+            loadMyProjects();
+        }
+
+        // Carregar Projetos no Perfil
+        function loadMyProjects() {
+            const user = localStorage.getItem('currentUser');
+            const grid = document.getElementById('my-projects');
+            let projects = JSON.parse(localStorage.getItem('cronos_projects') || "[]");
+            
+            grid.innerHTML = "";
+            projects.filter(p => p.user === user).forEach(p => {
+                grid.innerHTML += `<div class="card"><strong>${p.title}</strong><br><small>${p.type}</small></div>`;
+            });
+        }
+
+        // Configurações
+        function toggleTheme() {
+            document.getElementById('body').classList.toggle('light-mode');
+        }
+
+        function updateBio() {
+            const bio = document.getElementById('new-bio').value;
+            document.getElementById('profile-bio').innerText = bio;
+            alert("Bio atualizada!");
+        }
+
+        // Auto-login se já tiver conta
+        if(localStorage.getItem('currentUser')) {
+            document.getElementById('auth-screen').classList.add('hidden');
+            document.getElementById('app-screen').classList.remove('hidden');
+            updateUI();
         }
     </script>
 </body>
