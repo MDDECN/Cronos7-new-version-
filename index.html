@@ -7,216 +7,195 @@
     <meta name="google-site-verification" content="sSd18X-N2QfQif6989EZpVW29j8-zHF2vHswEXJ5Ask" />
     <meta name="google-site-verification" content="google092df57e55a7cdc3.html" />
 
-    <title>Cronos 7 | MDDECN Creator Hub</title>
+    <title>Cronos 7 | Professional Creator Hub</title>
     
-    <script src="https://cdn.jsdelivr.net/pyodide/v0.23.4/full/pyodide.js"></script>
     <style>
+        :root {
+            --primary: #00a2ff;
+            --dark: #0a0a0a;
+            --card: #1a1a1a;
+            --text: #ffffff;
+        }
+
         body {
-            background: linear-gradient(to right, #f0f0f0, #800080);
-            font-family: 'Segoe UI', sans-serif;
+            background-color: var(--dark);
+            background-image: radial-gradient(circle at 50% 50%, #1a1a3a 0%, #0a0a0a 100%);
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             margin: 0;
+            color: var(--text);
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-        } 
-        h1 {
-            background-color: red;
-            color: white;
-            padding: 12px 28px;
-            border-radius: 8px;
-            font-size: 22px;
-            text-align: center;
-        } 
-        p {
-            background: linear-gradient(to right, #000, #800);
-            color: #FFF;
-            padding: 15px;
-            border-radius: 8px;
-            font-size: 14px;
-        } 
-        button {
-            background: linear-gradient(to right, #f0f, #800080);
-            color: white;
-            padding: 12px 28px;
-            border: none;
-            border-radius: 8px;
-            font-family: 'Segoe UI', Sans-Serif;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            margin: 5px;
-            transition: 0.3s;
+            overflow-x: hidden;
         }
-        button:hover { transform: scale(1.05); opacity: 0.9; }
 
         .container {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            padding: 30px;
-            border-radius: 20px;
-            width: 90%;
-            max-width: 600px;
+            background: var(--card);
+            padding: 40px;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 450px;
             text-align: center;
-            border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,255,255,0.05);
+            transition: all 0.5s ease;
         }
-        .hidden { display: none; }
 
-        .formulary {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-top: 20px;
-            text-align: left;
-        }
+        h1 { font-size: 28px; margin-bottom: 10px; font-weight: 700; letter-spacing: -1px; }
+        .subtitle { color: #888; font-size: 14px; margin-bottom: 30px; }
+
+        .input-group { text-align: left; margin-bottom: 15px; }
+        label { display: block; font-size: 12px; color: var(--primary); font-weight: bold; margin-bottom: 5px; text-transform: uppercase; }
+        
         input {
+            width: 100%;
             padding: 12px;
-            border-radius: 8px;
-            border: none;
+            background: #252525;
+            border: 1px solid #333;
+            border-radius: 6px;
+            color: white;
+            box-sizing: border-box;
             outline: none;
+            transition: 0.3s;
         }
+        input:focus { border-color: var(--primary); box-shadow: 0 0 10px rgba(0, 162, 255, 0.2); }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: 0.3s;
+        }
+        button:hover { background: #0081cc; transform: translateY(-2px); }
+
+        .hidden { display: none; }
+        
+        /* Dashboard Style */
+        .dashboard { max-width: 900px; width: 95%; display: grid; grid-template-columns: 250px 1fr; gap: 20px; }
+        .sidebar { background: #111; padding: 20px; border-radius: 12px; text-align: left; border: 1px solid #222; }
+        .main-content { background: #111; padding: 30px; border-radius: 12px; border: 1px solid #222; }
+        
+        .nav-item { padding: 10px; margin-bottom: 5px; border-radius: 4px; cursor: pointer; color: #aaa; transition: 0.2s; }
+        .nav-item:hover { background: #222; color: white; }
+        .nav-item.active { background: var(--primary); color: white; }
 
         textarea {
             width: 100%;
-            height: 200px;
-            background: #1e1e1e;
+            height: 300px;
+            background: #000;
             color: #00ff00;
-            font-family: 'Courier New', monospace;
-            padding: 10px;
-            border-radius: 8px;
-            box-sizing: border-box;
-        }
-        #output {
-            background: white;
-            color: black;
+            font-family: 'Consolas', monospace;
             padding: 15px;
-            margin-top: 15px;
-            text-align: left;
-            min-height: 50px;
             border-radius: 8px;
-            white-space: pre-wrap;
+            border: 1px solid #333;
+            resize: none;
         }
-        .lang-tag {
-            background: #FFD700;
-            color: black;
-            padding: 4px 10px;
+
+        .status-bar {
+            margin-top: 15px;
+            padding: 10px;
+            background: #1a1a1a;
             border-radius: 4px;
             font-size: 12px;
-            font-weight: bold;
-            margin-bottom: 10px;
-            display: inline-block;
+            color: #555;
+            text-align: left;
         }
     </style>
 </head>
 <body>
 
     <div id="login-page" class="container">
-        <h1>Welcome to Chronos 7!</h1>
-        <p>Beta version. We are working on JS codes. Chat us if any problem happens. Community: MDDECN.</p>
+        <h1>CRONOS <span style="color: var(--primary);">7</span></h1>
+        <p class="subtitle">MDDECN Engine - Cloud Development</p>
         
-        <div style="margin-bottom: 20px;">
-            <a href="https://discord.gg/dXe9jspdZ"><button>Discord Updates</button></a>
-            <a href="https://github.com/miguelsaldanha1213-byte"><button>GitHub Updates</button></a>
+        <div class="input-group">
+            <label>Roblox Account / Email</label>
+            <input type="text" id="user" placeholder="Ex: Mishk19000">
         </div>
-
-        <div class="formulary">
-            <label style="color: white; font-weight: bold;">E-mail:</label>
-            <input type="email" id="emailUser" placeholder="name@example.com">
-            <label style="color: white; font-weight: bold;">Password:</label>
-            <input type="password" id="passUser" placeholder="••••••••">
-            <button onclick="handleLogin()">GO IN</button>
+        <div class="input-group">
+            <label>Access Key</label>
+            <input type="password" id="pass" placeholder="••••••••">
         </div>
+        <button onclick="login()">INITIALIZE ENGINE</button>
+        <p style="font-size: 10px; color: #444; margin-top: 15px;">Secure connection via GitHub Pages SSL</p>
     </div>
 
-    <div id="hub-page" class="container hidden">
-        <h1>MDDECN Creator Hub</h1>
-        <p>Select your workspace:</p>
-        <button onclick="openIDE('html')">🌐 Create Website</button>
-        <button onclick="openIDE('python')">🐍 Create Python App</button>
-        <button onclick="alert('Redirecting to Roblox Cloud...')">🎮 Create Roblox Game</button>
-        <br><br>
-        <button style="background: #444;" onclick="location.reload()">Logout</button>
-    </div>
-
-    <div id="ide-page" class="container hidden">
-        <h1 id="ide-title">Editor</h1>
-        <div id="lang-indicator" class="lang-tag">MODE: HTML</div>
-        
-        <textarea id="code-input" placeholder="Type your code here..."></textarea>
-        
-        <div style="margin-top: 10px;">
-            <button style="background: green;" onclick="runCode()">▶ PLAY</button>
-            <button style="background: blue;" onclick="publish()">🚀 Publish</button>
-            <button style="background: #666;" onclick="backToHub()">Back</button>
+    <div id="dashboard-page" class="dashboard hidden">
+        <div class="sidebar">
+            <h2 style="font-size: 18px;">Cronos Studio</h2>
+            <div class="nav-item active">🏠 Home</div>
+            <div class="nav-item">📁 My Projects</div>
+            <div class="nav-item">🛠 Tools</div>
+            <div class="nav-item" style="margin-top: 50px; color: #ff4444;" onclick="location.reload()">🚪 Logout</div>
         </div>
 
-        <div id="output-container">
-            <h3 style="color: white;">Live Output:</h3>
-            <div id="output">Result will appear here...</div>
+        <div class="main-content">
+            <h2 id="welcome-msg">Welcome, Creator</h2>
+            <p style="color: #888;">Select an action to start building in the cloud.</p>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px;">
+                <div style="background: #1a1a1a; padding: 20px; border-radius: 8px; border-left: 4px solid var(--primary);">
+                    <h3 style="margin-top: 0;">Roblox Studio Cloud</h3>
+                    <p style="font-size: 12px; color: #666;">Sync scripts directly to your place.</p>
+                    <button onclick="openEditor()">Open Script Editor</button>
+                </div>
+                <div style="background: #1a1a1a; padding: 20px; border-radius: 8px; border-left: 4px solid #00ff00;">
+                    <h3 style="margin-top: 0;">Asset Manager</h3>
+                    <p style="font-size: 12px; color: #666;">Manage 3D models and textures.</p>
+                    <button style="background: #333;" onclick="alert('Connecting to Roblox API...')">Launch Manager</button>
+                </div>
+            </div>
+
+            <div id="editor-section" class="hidden" style="margin-top: 30px;">
+                <label>LUA SCRIPT EDITOR (v5.4)</label>
+                <textarea id="lua-code">-- Cronos 7 Script Hub
+function onTouched(part)
+    print("Welcome to Cronos 7, Miguel!")
+end
+</textarea>
+                <button style="background: #00ff00; color: black;" onclick="publish()">🚀 PUBLISH TO ROBLOX CLOUD</button>
+                <div class="status-bar" id="status">Status: Ready to deploy</div>
+            </div>
         </div>
     </div>
 
     <script>
-        let selectedLang = 'html';
-        let pyodide = null;
-
-        function handleLogin() {
-            const email = document.getElementById('emailUser').value;
-            const pass = document.getElementById('passUser').value;
-
-            if(email.includes('@') && pass.length >= 4) {
+        function login() {
+            const user = document.getElementById('user').value;
+            if(user.length > 2) {
                 document.getElementById('login-page').classList.add('hidden');
-                document.getElementById('hub-page').classList.remove('hidden');
+                document.getElementById('dashboard-page').style.display = 'grid';
+                document.getElementById('welcome-msg').innerText = "Welcome back, " + user;
             } else {
-                alert("Please enter a valid email and 4+ character password.");
+                alert("Please enter your account name.");
             }
         }
 
-        async function openIDE(lang) {
-            selectedLang = lang;
-            document.getElementById('hub-page').classList.add('hidden');
-            document.getElementById('ide-page').classList.remove('hidden');
-            document.getElementById('lang-indicator').innerText = "MODE: " + lang.toUpperCase();
-            document.getElementById('ide-title').innerText = lang === 'html' ? "Web Builder" : "Python Studio";
-            
-            if(lang === 'python' && !pyodide) {
-                document.getElementById('output').innerText = "Loading Python Engine... Please wait.";
-                pyodide = await loadPyodide();
-                document.getElementById('output').innerText = "Python Ready!";
-            }
-        }
-
-        function backToHub() {
-            document.getElementById('ide-page').classList.add('hidden');
-            document.getElementById('hub-page').classList.remove('hidden');
-        }
-
-        async function runCode() {
-            const code = document.getElementById('code-input').value;
-            const outputDiv = document.getElementById('output');
-            outputDiv.style.color = "black";
-
-            if(selectedLang === 'html') {
-                outputDiv.innerHTML = code;
-            } else if(selectedLang === 'python') {
-                try {
-                    pyodide.runPython(`
-                        import sys
-                        import io
-                        sys.stdout = io.StringIO()
-                    `);
-                    await pyodide.runPythonAsync(code);
-                    let stdout = pyodide.runPython("sys.stdout.getvalue()");
-                    outputDiv.innerText = stdout || "Executed (No output).";
-                } catch(err) {
-                    outputDiv.style.color = "red";
-                    outputDiv.innerText = err;
-                }
-            }
+        function openEditor() {
+            document.getElementById('editor-section').classList.toggle('hidden');
         }
 
         function publish() {
-            alert("Success! Your project is being indexed by Google Search Console.");
+            const status = document.getElementById('status');
+            status.innerText = "Connecting to Roblox OpenCloud API...";
+            status.style.color = var(--primary);
+            
+            setTimeout(() => {
+                status.innerText = "Uploading Place Data... 45%";
+            }, 1000);
+
+            setTimeout(() => {
+                status.innerText = "Success! Script published to your Roblox Place.";
+                status.style.color = "#00ff00";
+                alert("Project Sent! (Simulation: In a real app, this would use Roblox Open Cloud API keys).");
+            }, 3000);
         }
     </script>
 </body>
