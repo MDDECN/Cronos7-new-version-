@@ -7,195 +7,247 @@
     <meta name="google-site-verification" content="sSd18X-N2QfQif6989EZpVW29j8-zHF2vHswEXJ5Ask" />
     <meta name="google-site-verification" content="google092df57e55a7cdc3.html" />
 
-    <title>Cronos 7 | Professional Creator Hub</title>
+    <title>Cronos 7 | Pro Script Cloud</title>
     
     <style>
         :root {
-            --primary: #00a2ff;
-            --dark: #0a0a0a;
-            --card: #1a1a1a;
-            --text: #ffffff;
+            --blue: #00a2ff;
+            --bg: #050505;
+            --panel: #111111;
+            --border: #222222;
+            --success: #00ff88;
         }
 
         body {
-            background-color: var(--dark);
-            background-image: radial-gradient(circle at 50% 50%, #1a1a3a 0%, #0a0a0a 100%);
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg);
+            color: white;
+            font-family: 'Segoe UI', sans-serif;
             margin: 0;
-            color: var(--text);
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
-            overflow-x: hidden;
+            height: 100vh;
+            overflow: hidden;
         }
 
-        .container {
-            background: var(--card);
+        /* TELA DE LOGIN */
+        .login-container {
+            background: var(--panel);
             padding: 40px;
-            border-radius: 12px;
+            border-radius: 15px;
+            border: 1px solid var(--border);
             width: 100%;
-            max-width: 450px;
+            max-width: 350px;
             text-align: center;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-            border: 1px solid rgba(255,255,255,0.05);
-            transition: all 0.5s ease;
+            box-shadow: 0 15px 50px rgba(0,0,0,0.7);
         }
 
-        h1 { font-size: 28px; margin-bottom: 10px; font-weight: 700; letter-spacing: -1px; }
-        .subtitle { color: #888; font-size: 14px; margin-bottom: 30px; }
+        /* STUDIO LAYOUT */
+        #studio-layout {
+            display: none;
+            width: 98vw;
+            height: 95vh;
+            grid-template-columns: 240px 1fr 260px;
+            gap: 8px;
+            padding: 5px;
+        }
 
-        .input-group { text-align: left; margin-bottom: 15px; }
-        label { display: block; font-size: 12px; color: var(--primary); font-weight: bold; margin-bottom: 5px; text-transform: uppercase; }
-        
-        input {
-            width: 100%;
-            padding: 12px;
-            background: #252525;
-            border: 1px solid #333;
+        .sidebar { 
+            background: var(--panel); 
+            border: 1px solid var(--border); 
+            padding: 12px; 
             border-radius: 6px;
-            color: white;
-            box-sizing: border-box;
-            outline: none;
-            transition: 0.3s;
+            display: flex;
+            flex-direction: column;
         }
-        input:focus { border-color: var(--primary); box-shadow: 0 0 10px rgba(0, 162, 255, 0.2); }
+
+        .main-editor { 
+            background: #000; 
+            border: 1px solid var(--blue); 
+            border-radius: 6px; 
+            display: flex; 
+            flex-direction: column;
+            position: relative;
+        }
+
+        input, textarea {
+            width: 100%;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            color: white;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
 
         button {
-            width: 100%;
-            padding: 14px;
-            background: var(--primary);
+            background: var(--blue);
             color: white;
             border: none;
-            border-radius: 6px;
-            font-weight: bold;
+            padding: 12px;
+            border-radius: 5px;
             cursor: pointer;
-            margin-top: 10px;
-            transition: 0.3s;
+            font-weight: bold;
+            transition: 0.2s;
+            margin-bottom: 5px;
         }
-        button:hover { background: #0081cc; transform: translateY(-2px); }
 
-        .hidden { display: none; }
-        
-        /* Dashboard Style */
-        .dashboard { max-width: 900px; width: 95%; display: grid; grid-template-columns: 250px 1fr; gap: 20px; }
-        .sidebar { background: #111; padding: 20px; border-radius: 12px; text-align: left; border: 1px solid #222; }
-        .main-content { background: #111; padding: 30px; border-radius: 12px; border: 1px solid #222; }
-        
-        .nav-item { padding: 10px; margin-bottom: 5px; border-radius: 4px; cursor: pointer; color: #aaa; transition: 0.2s; }
-        .nav-item:hover { background: #222; color: white; }
-        .nav-item.active { background: var(--primary); color: white; }
+        button:hover { filter: brightness(1.2); transform: translateY(-1px); }
+        .btn-download { background: var(--success); color: black; }
+        .btn-copy { background: #444; }
 
-        textarea {
-            width: 100%;
-            height: 300px;
-            background: #000;
-            color: #00ff00;
-            font-family: 'Consolas', monospace;
-            padding: 15px;
-            border-radius: 8px;
-            border: 1px solid #333;
+        #code-area {
+            flex-grow: 1;
+            background: transparent;
+            color: #dcdcaa;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 15px;
+            border: none;
+            padding: 20px;
+            outline: none;
             resize: none;
+            line-height: 1.5;
         }
 
-        .status-bar {
-            margin-top: 15px;
-            padding: 10px;
-            background: #1a1a1a;
-            border-radius: 4px;
+        .label-studio { font-size: 11px; color: var(--blue); font-weight: bold; margin-bottom: 8px; text-transform: uppercase; }
+        .item { font-size: 13px; color: #888; padding: 6px; cursor: pointer; border-radius: 4px; }
+        .item:hover { background: #222; color: white; }
+        .hidden { display: none; }
+
+        #output {
+            background: #0a0a0a;
+            color: #aaa;
+            font-family: monospace;
             font-size: 12px;
-            color: #555;
-            text-align: left;
+            padding: 10px;
+            height: 120px;
+            overflow-y: auto;
+            border-top: 1px solid #222;
         }
     </style>
 </head>
 <body>
 
-    <div id="login-page" class="container">
-        <h1>CRONOS <span style="color: var(--primary);">7</span></h1>
-        <p class="subtitle">MDDECN Engine - Cloud Development</p>
+    <div id="login-screen" class="login-container">
+        <h1 style="margin: 0; font-size: 32px;">CRONOS <span style="color: var(--blue);">7</span></h1>
+        <p style="color: #666; margin-bottom: 30px;">Professional Luau Engine</p>
         
-        <div class="input-group">
-            <label>Roblox Account / Email</label>
-            <input type="text" id="user" placeholder="Ex: Mishk19000">
-        </div>
-        <div class="input-group">
-            <label>Access Key</label>
-            <input type="password" id="pass" placeholder="••••••••">
-        </div>
-        <button onclick="login()">INITIALIZE ENGINE</button>
-        <p style="font-size: 10px; color: #444; margin-top: 15px;">Secure connection via GitHub Pages SSL</p>
+        <input type="text" id="rbx-user" placeholder="Seu nome no Roblox">
+        <button onclick="enterStudio()">START BUILDING</button>
+        <p style="font-size: 10px; color: #333; margin-top: 20px;">V 2.5.0 | SECURE CLOUD ADAPTATION</p>
     </div>
 
-    <div id="dashboard-page" class="dashboard hidden">
+    <div id="studio-layout">
+        
         <div class="sidebar">
-            <h2 style="font-size: 18px;">Cronos Studio</h2>
-            <div class="nav-item active">🏠 Home</div>
-            <div class="nav-item">📁 My Projects</div>
-            <div class="nav-item">🛠 Tools</div>
-            <div class="nav-item" style="margin-top: 50px; color: #ff4444;" onclick="location.reload()">🚪 Logout</div>
-        </div>
-
-        <div class="main-content">
-            <h2 id="welcome-msg">Welcome, Creator</h2>
-            <p style="color: #888;">Select an action to start building in the cloud.</p>
+            <div class="label-studio">Explorer</div>
+            <div class="item">📂 Workspace</div>
+            <div class="item">  🔹 Baseplate</div>
+            <div class="item">📂 ServerScriptService</div>
+            <div class="item" style="color: var(--success);">  📜 MainScript.lua</div>
+            <div class="item">📂 ReplicatedStorage</div>
             
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px;">
-                <div style="background: #1a1a1a; padding: 20px; border-radius: 8px; border-left: 4px solid var(--primary);">
-                    <h3 style="margin-top: 0;">Roblox Studio Cloud</h3>
-                    <p style="font-size: 12px; color: #666;">Sync scripts directly to your place.</p>
-                    <button onclick="openEditor()">Open Script Editor</button>
-                </div>
-                <div style="background: #1a1a1a; padding: 20px; border-radius: 8px; border-left: 4px solid #00ff00;">
-                    <h3 style="margin-top: 0;">Asset Manager</h3>
-                    <p style="font-size: 12px; color: #666;">Manage 3D models and textures.</p>
-                    <button style="background: #333;" onclick="alert('Connecting to Roblox API...')">Launch Manager</button>
-                </div>
-            </div>
+            <div class="label-studio" style="margin-top: 20px;">Cloud Assets</div>
+            <div class="item">☁️ GlobalDataStore</div>
+        </div>
 
-            <div id="editor-section" class="hidden" style="margin-top: 30px;">
-                <label>LUA SCRIPT EDITOR (v5.4)</label>
-                <textarea id="lua-code">-- Cronos 7 Script Hub
-function onTouched(part)
-    print("Welcome to Cronos 7, Miguel!")
-end
-</textarea>
-                <button style="background: #00ff00; color: black;" onclick="publish()">🚀 PUBLISH TO ROBLOX CLOUD</button>
-                <div class="status-bar" id="status">Status: Ready to deploy</div>
+        <div class="main-editor">
+            <div style="background: #181818; padding: 8px 15px; font-size: 12px; color: #888; border-bottom: 1px solid #222; display: flex; justify-content: space-between;">
+                <span>MainScript.lua</span>
+                <span id="dev-tag" style="color: var(--blue);">Dev: ---</span>
+            </div>
+            
+            <textarea id="code-area" spellcheck="false" oninput="autoSave()">-- Escreva seu código Luau aqui
+function onPlayerAdded(player)
+    print("Olá " .. player.Name .. ", bem-vindo ao meu jogo!")
+end</textarea>
+            
+            <div id="output">> System: Engine Ready. Waiting for input...</div>
+        </div>
+
+        <div class="sidebar">
+            <div class="label-studio">Actions</div>
+            <button class="btn-download" onclick="downloadScript()">💾 DOWNLOAD .LUA</button>
+            <button class="btn-copy" onclick="copyCode()">📋 COPY CODE</button>
+            
+            <div class="label-studio" style="margin-top: 20px;">Publishing</div>
+            <button onclick="simPublish()">🚀 PUBLISH TO CLOUD</button>
+            
+            <div style="margin-top: auto;">
+                <button style="background: transparent; color: #ff4444; border: 1px solid #ff4444;" onclick="location.reload()">LOGOUT</button>
             </div>
         </div>
+
     </div>
 
     <script>
-        function login() {
-            const user = document.getElementById('user').value;
-            if(user.length > 2) {
-                document.getElementById('login-page').classList.add('hidden');
-                document.getElementById('dashboard-page').style.display = 'grid';
-                document.getElementById('welcome-msg').innerText = "Welcome back, " + user;
-            } else {
-                alert("Please enter your account name.");
+        const codeArea = document.getElementById('code-area');
+        const output = document.getElementById('output');
+
+        // 1. CARREGAR DADOS SALVOS
+        window.onload = () => {
+            const savedCode = localStorage.getItem('cronos7_code');
+            if (savedCode) {
+                codeArea.value = savedCode;
             }
         }
 
-        function openEditor() {
-            document.getElementById('editor-section').classList.toggle('hidden');
+        // 2. ENTRAR NO STUDIO
+        function enterStudio() {
+            const user = document.getElementById('rbx-user').value;
+            if (user.length < 3) {
+                alert("Por favor, digite seu nome de usuário.");
+                return;
+            }
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('studio-layout').style.display = 'grid';
+            document.getElementById('dev-tag').innerText = "Developer: " + user;
         }
 
-        function publish() {
-            const status = document.getElementById('status');
-            status.innerText = "Connecting to Roblox OpenCloud API...";
-            status.style.color = var(--primary);
-            
-            setTimeout(() => {
-                status.innerText = "Uploading Place Data... 45%";
-            }, 1000);
+        // 3. AUTO-SALVAMENTO
+        function autoSave() {
+            localStorage.setItem('cronos7_code', codeArea.value);
+        }
 
+        // 4. DOWNLOAD DO ARQUIVO .LUA (Real!)
+        function downloadScript() {
+            const text = codeArea.value;
+            const blob = new Blob([text], { type: 'text/plain' });
+            const anchor = document.createElement('a');
+            anchor.download = 'MainScript.lua';
+            anchor.href = window.URL.createObjectURL(blob);
+            anchor.target = '_blank';
+            anchor.style.display = 'none';
+            document.body.appendChild(anchor);
+            anchor.click();
+            document.body.removeChild(anchor);
+            
+            logMessage("Script baixado com sucesso. Arraste para o Roblox Studio!");
+        }
+
+        // 5. COPIAR CÓDIGO
+        function copyCode() {
+            codeArea.select();
+            document.execCommand('copy');
+            logMessage("Código copiado para a área de transferência!");
+        }
+
+        // 6. SIMULAÇÃO DE PUBLICAÇÃO
+        function simPublish() {
+            logMessage("Conectando aos servidores do Roblox...");
+            setTimeout(() => logMessage("Autenticando via Cronos API..."), 1000);
             setTimeout(() => {
-                status.innerText = "Success! Script published to your Roblox Place.";
-                status.style.color = "#00ff00";
-                alert("Project Sent! (Simulation: In a real app, this would use Roblox Open Cloud API keys).");
-            }, 3000);
+                logMessage("ERRO: OpenCloud necessita de chave RSA Privada.");
+                logMessage("DICA: Use o botão 'DOWNLOAD .LUA' para publicar manualmente.");
+                alert("Simulação concluída: O Roblox exige chaves de segurança que não podem ficar públicas no GitHub. Use o botão de Download!");
+            }, 2500);
+        }
+
+        function logMessage(msg) {
+            output.innerHTML += `<br>> ${msg}`;
+            output.scrollTop = output.scrollHeight;
         }
     </script>
 </body>
