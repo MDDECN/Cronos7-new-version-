@@ -3,158 +3,170 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cronos 7 | Global Network</title>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-
+    <title>Cronos 7 | Cloud Dev Hub</title>
     <style>
-        :root { --primary: #00a2ff; --bg: #050505; --panel: #111; --text: #fff; --border: #222; }
-        body.light-mode { --bg: #f0f2f5; --panel: #fff; --text: #111; --border: #ddd; }
-        body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; margin: 0; transition: 0.3s; }
+        :root {
+            --primary: #00a2ff;
+            --bg: #050505;
+            --panel: #111;
+            --text: #fff;
+            --border: #222;
+            --google: #ea4335;
+            --github: #333;
+        }
+
+        body.light-mode {
+            --bg: #f0f2f5;
+            --panel: #fff;
+            --text: #111;
+            --border: #ddd;
+        }
+
+        body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; margin: 0; transition: 0.3s; overflow: hidden; }
         .hidden { display: none !important; }
 
-        /* AUTH SCREEN */
-        .auth-container { height: 100vh; display: flex; justify-content: center; align-items: center; }
-        .auth-box { background: var(--panel); padding: 30px; border-radius: 15px; border: 1px solid var(--border); width: 100%; max-width: 350px; text-align: center; }
+        /* TELA DE AUTENTICAÇÃO */
+        .auth-container { height: 100vh; display: flex; justify-content: center; align-items: center; background: radial-gradient(circle at center, #111 0%, #000 100%); }
+        .auth-box { background: var(--panel); padding: 30px; border-radius: 15px; border: 1px solid var(--border); width: 100%; max-width: 380px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
         
         input { width: 100%; padding: 12px; margin: 10px 0; background: #000; border: 1px solid #333; color: white; border-radius: 6px; box-sizing: border-box; }
         body.light-mode input { background: #fff; border: 1px solid #ccc; color: #000; }
         
-        button { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 10px; }
-        .switch-auth { font-size: 12px; color: var(--primary); cursor: pointer; margin-top: 15px; display: block; }
+        .btn-main { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 10px; font-size: 16px; }
+        
+        .divider { margin: 20px 0; display: flex; align-items: center; color: #666; font-size: 12px; }
+        .divider::before, .divider::after { content: ""; flex: 1; height: 1px; background: #333; margin: 0 10px; }
 
-        /* DASHBOARD */
-        .main-layout { display: grid; grid-template-columns: 250px 1fr; height: 100vh; }
-        .sidebar { background: var(--panel); border-right: 1px solid var(--border); padding: 20px; }
-        .content { padding: 40px; overflow-y: auto; text-align: left; }
-        .tab { animation: fadeIn 0.3s ease; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .social-btn { width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 6px; border: 1px solid #333; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; font-weight: 500; transition: 0.2s; background: transparent; color: white; }
+        body.light-mode .social-btn { color: #333; border-color: #ccc; }
+        .btn-google:hover { background: var(--google); border-color: var(--google); color: white; }
+        .btn-github:hover { background: var(--github); border-color: var(--github); color: white; }
+
+        .switch-mode { margin-top: 20px; font-size: 14px; color: #888; }
+        .switch-mode b { color: var(--primary); cursor: pointer; }
+
+        /* LAYOUT DO APP */
+        .main-app { display: grid; grid-template-columns: 260px 1fr; height: 100vh; }
+        .sidebar { background: var(--panel); border-right: 1px solid var(--border); padding: 25px; display: flex; flex-direction: column; }
+        .content { padding: 40px; overflow-y: auto; }
+        
+        .nav-link { padding: 12px; margin: 8px 0; border-radius: 8px; cursor: pointer; transition: 0.2s; }
+        .nav-link:hover { background: rgba(0, 162, 255, 0.1); color: var(--primary); }
+        .nav-link.active { background: var(--primary); color: white; }
     </style>
 </head>
 <body id="body">
 
     <div id="auth-screen" class="auth-container">
         <div class="auth-box">
-            <h1 id="auth-title">CRIAR CONTA</h1>
-            <p id="auth-subtitle" style="font-size: 14px; color: #666;">Junte-se ao Cronos 7</p>
+            <h1 id="title">CRONOS <span style="color:var(--primary)">7</span></h1>
+            <p id="subtitle" style="color: #666; font-size: 14px; margin-bottom: 20px;">Crie sua conta de desenvolvedor</p>
+
+            <div id="register-fields">
+                <input type="text" id="reg-name" placeholder="Nome Completo">
+            </div>
+            <input type="email" id="email" placeholder="E-mail">
+            <input type="password" id="pass" placeholder="Senha">
             
-            <input type="text" id="user-name-input" placeholder="Nome de Usuário">
-            <input type="email" id="email-input" placeholder="Seu melhor E-mail">
-            <input type="password" id="pass-input" placeholder="Senha (mín. 6 caracteres)">
-            
-            <button id="auth-btn" onclick="handleAuth()">CADASTRAR</button>
-            <span class="switch-auth" id="toggle-auth" onclick="toggleAuthMode()">Já tem conta? Fazer Login</span>
+            <button class="btn-main" id="main-btn" onclick="enterApp()">CADASTRAR</button>
+
+            <div class="divider">OU ENTRE COM</div>
+
+            <button class="social-btn btn-google" onclick="alert('Conectando ao Google API...')">
+                <span>🌐</span> Google
+            </button>
+            <button class="social-btn btn-github" onclick="alert('Conectando ao GitHub API...')">
+                <span>🐙</span> GitHub
+            </button>
+
+            <div class="switch-mode">
+                <span id="switch-text">Já tem uma conta?</span> <b onclick="toggleAuth()" id="switch-link">Clique em entrar</b>
+            </div>
         </div>
     </div>
 
-    <div id="app-screen" class="main-layout hidden">
+    <div id="app-screen" class="main-app hidden">
         <div class="sidebar">
             <h2 style="color: var(--primary);">CRONOS 7</h2>
-            <p id="nav-user" style="font-size: 14px; font-weight: bold;">@user</p>
-            <hr style="border: 0; border-top: 1px solid var(--border); margin: 20px 0;">
-            <div onclick="showTab('home')" style="cursor:pointer; margin: 10px 0;">🏠 Feed Global</div>
-            <div onclick="showTab('profile')" style="cursor:pointer; margin: 10px 0;">👤 Meu Perfil</div>
-            <div onclick="showTab('settings')" style="cursor:pointer; margin: 10px 0;">⚙️ Configurações</div>
-            <button onclick="logout()" style="background: #ff4444; margin-top: 50px;">Sair</button>
+            <div id="user-info" style="margin-bottom: 30px; border-bottom: 1px solid var(--border); padding-bottom: 20px;">
+                <b id="display-user">@Usuario</b><br>
+                <small style="color: #666;">Developer</small>
+            </div>
+            
+            <div class="nav-link active" onclick="showTab('feed')">🏠 Feed Comunitário</div>
+            <div class="nav-link" onclick="showTab('profile')">👤 Meu Perfil</div>
+            <div class="nav-link" onclick="showTab('create')">🛠️ Criar (Site/Jogo)</div>
+            <div class="nav-link" onclick="showTab('settings')">⚙️ Configurações</div>
+            
+            <button style="margin-top: auto; background: #ff4444; padding: 10px; border-radius: 6px; border:none; color:white; cursor:pointer;" onclick="logout()">Sair</button>
         </div>
 
-        <div class="content">
-            <div id="tab-home" class="tab">
-                <h1>Feed da Comunidade</h1>
-                <p>Aqui aparecerão os projetos de todos os usuários cadastrados.</p>
-            </div>
-
-            <div id="tab-profile" class="tab hidden">
-                <h1 id="display-name">Carregando...</h1>
-                <p id="display-email" style="color: var(--primary);"></p>
-                <div style="background: var(--panel); padding: 20px; border: 1px solid var(--border); border-radius: 10px;">
-                    <h3>Meus Projetos</h3>
-                    <p style="font-size: 14px; color: #666;">Ainda não tens projetos publicados.</p>
+        <div class="content" id="main-content">
+            <div id="tab-feed">
+                <h1>Feed Global</h1>
+                <p style="color: #888;">Veja o que a comunidade Cronos 7 está criando.</p>
+                <div style="background: var(--panel); padding: 20px; border-radius: 10px; border: 1px solid var(--border);">
+                    <b>@Mishk19000</b> publicou um novo <i>Script de Física</i>.
                 </div>
             </div>
 
-            <div id="tab-settings" class="tab hidden">
+            <div id="tab-profile" class="hidden">
+                <h1 id="p-name">Nome do Usuário</h1>
+                <p>Seus projetos e seguidores aparecerão aqui.</p>
+            </div>
+
+            <div id="tab-settings" class="hidden">
                 <h1>Configurações</h1>
-                <button onclick="document.getElementById('body').classList.toggle('light-mode')">Mudar Tema (Claro/Escuro)</button>
+                <p>Personalize sua experiência.</p>
+                <button class="btn-main" style="width: 200px; background: #555;" onclick="document.getElementById('body').classList.toggle('light-mode')">
+                    Modo Claro / Escuro
+                </button>
             </div>
         </div>
     </div>
 
     <script>
-        // CONFIGURAÇÃO DO FIREBASE (Miguel, substitui isto pelo que copiares do teu painel)
-        const firebaseConfig = {
-            apiKey: "COLA_AQUI_A_TUA_API_KEY",
-            authDomain: "cronos7.firebaseapp.com",
-            projectId: "cronos7",
-            storageBucket: "cronos7.appspot.com",
-            messagingSenderId: "0000000000",
-            appId: "1:00000000:web:000000"
-        };
-        firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-        const db = firebase.firestore();
+        let isLogin = false;
 
-        let isLoginMode = false;
-
-        function toggleAuthMode() {
-            isLoginMode = !isLoginMode;
-            document.getElementById('auth-title').innerText = isLoginMode ? "LOGIN" : "CRIAR CONTA";
-            document.getElementById('auth-btn').innerText = isLoginMode ? "ENTRAR" : "CADASTRAR";
-            document.getElementById('user-name-input').classList.toggle('hidden', isLoginMode);
-            document.getElementById('toggle-auth').innerText = isLoginMode ? "Não tem conta? Cadastre-se" : "Já tem conta? Fazer Login";
+        function toggleAuth() {
+            isLogin = !isLogin;
+            document.getElementById('title').innerHTML = isLogin ? "LOGIN" : "CRONOS <span style='color:var(--primary)'>7</span>";
+            document.getElementById('subtitle').innerText = isLogin ? "Bem-vindo de volta" : "Crie sua conta de desenvolvedor";
+            document.getElementById('main-btn').innerText = isLogin ? "ENTRAR" : "CADASTRAR";
+            document.getElementById('register-fields').classList.toggle('hidden', isLogin);
+            document.getElementById('switch-text').innerText = isLogin ? "Não tem uma conta?" : "Já tem uma conta?";
+            document.getElementById('switch-link').innerText = isLogin ? "Cadastre-se" : "Clique em entrar";
         }
 
-        async function handleAuth() {
-            const email = document.getElementById('email-input').value;
-            const pass = document.getElementById('pass-input').value;
-            const name = document.getElementById('user-name-input').value;
-
-            try {
-                if (isLoginMode) {
-                    await auth.signInWithEmailAndPassword(email, pass);
-                } else {
-                    const res = await auth.createUserWithEmailAndPassword(email, pass);
-                    // Salva o nome do usuário no banco de dados
-                    await db.collection('users').doc(res.user.uid).set({
-                        name: name,
-                        email: email,
-                        bio: "Dev iniciante no Cronos 7"
-                    });
-                }
-            } catch (error) {
-                alert("Erro: " + error.message);
-            }
+        function enterApp() {
+            const name = document.getElementById('reg-name').value || "Usuário";
+            localStorage.setItem('cronos_user', name);
+            
+            document.getElementById('auth-screen').classList.add('hidden');
+            document.getElementById('app-screen').classList.remove('hidden');
+            document.getElementById('display-user').innerText = "@" + name;
+            document.getElementById('p-name').innerText = name;
         }
 
-        // Observador de Login (Fica de olho se o usuário está logado)
-        auth.onAuthStateChanged(user => {
-            if (user) {
-                document.getElementById('auth-screen').classList.add('hidden');
-                document.getElementById('app-screen').classList.remove('hidden');
-                loadUserData(user.uid);
-            } else {
-                document.getElementById('auth-screen').classList.remove('hidden');
-                document.getElementById('app-screen').classList.add('hidden');
-            }
-        });
-
-        async function loadUserData(uid) {
-            const doc = await db.collection('users').doc(uid).get();
-            if (doc.exists) {
-                const data = doc.data();
-                document.getElementById('nav-user').innerText = "@" + data.name;
-                document.getElementById('display-name').innerText = data.name;
-                document.getElementById('display-email').innerText = data.email;
-            }
+        function showTab(tab) {
+            const tabs = ['tab-feed', 'tab-profile', 'tab-settings'];
+            tabs.forEach(t => document.getElementById(t).classList.add('hidden'));
+            document.getElementById('tab-' + tab).classList.remove('hidden');
+            
+            // Atualiza classe ativa
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            event.currentTarget.classList.add('active');
         }
 
-        function showTab(name) {
-            document.querySelectorAll('.tab').forEach(t => t.classList.add('hidden'));
-            document.getElementById('tab-' + name).classList.remove('hidden');
+        function logout() {
+            localStorage.removeItem('cronos_user');
+            location.reload();
         }
 
-        function logout() { auth.signOut(); }
+        // Verifica se já está logado
+        if(localStorage.getItem('cronos_user')) {
+            enterApp();
+        }
     </script>
 </body>
 </html>
