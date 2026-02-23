@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cronos 7 | Cloud Dev Hub</title>
+    <title>Cronos 7 | Global Dev Hub</title>
     <style>
         :root {
             --primary: #00a2ff;
@@ -11,8 +11,6 @@
             --panel: #111;
             --text: #fff;
             --border: #222;
-            --google: #ea4335;
-            --github: #333;
         }
 
         body.light-mode {
@@ -22,37 +20,33 @@
             --border: #ddd;
         }
 
-        body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; margin: 0; transition: 0.3s; overflow: hidden; }
+        body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; margin: 0; transition: 0.3s; }
         .hidden { display: none !important; }
 
-        /* TELA DE AUTENTICAÇÃO */
+        /* AUTH SCREEN */
         .auth-container { height: 100vh; display: flex; justify-content: center; align-items: center; background: radial-gradient(circle at center, #111 0%, #000 100%); }
-        .auth-box { background: var(--panel); padding: 30px; border-radius: 15px; border: 1px solid var(--border); width: 100%; max-width: 380px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
+        .auth-box { background: var(--panel); padding: 30px; border-radius: 15px; border: 1px solid var(--border); width: 100%; max-width: 380px; text-align: center; }
         
         input { width: 100%; padding: 12px; margin: 10px 0; background: #000; border: 1px solid #333; color: white; border-radius: 6px; box-sizing: border-box; }
         body.light-mode input { background: #fff; border: 1px solid #ccc; color: #000; }
         
-        .btn-main { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 10px; font-size: 16px; }
+        .btn-main { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 10px; }
         
-        .divider { margin: 20px 0; display: flex; align-items: center; color: #666; font-size: 12px; }
-        .divider::before, .divider::after { content: ""; flex: 1; height: 1px; background: #333; margin: 0 10px; }
-
-        .social-btn { width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 6px; border: 1px solid #333; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; font-weight: 500; transition: 0.2s; background: transparent; color: white; }
+        .social-btn { width: 100%; padding: 10px; margin-bottom: 8px; border-radius: 6px; border: 1px solid #333; cursor: pointer; background: transparent; color: white; display: flex; align-items: center; justify-content: center; gap: 10px; }
         body.light-mode .social-btn { color: #333; border-color: #ccc; }
-        .btn-google:hover { background: var(--google); border-color: var(--google); color: white; }
-        .btn-github:hover { background: var(--github); border-color: var(--github); color: white; }
 
-        .switch-mode { margin-top: 20px; font-size: 14px; color: #888; }
-        .switch-mode b { color: var(--primary); cursor: pointer; }
-
-        /* LAYOUT DO APP */
+        /* APP LAYOUT */
         .main-app { display: grid; grid-template-columns: 260px 1fr; height: 100vh; }
-        .sidebar { background: var(--panel); border-right: 1px solid var(--border); padding: 25px; display: flex; flex-direction: column; }
+        .sidebar { background: var(--panel); border-right: 1px solid var(--border); padding: 25px; }
         .content { padding: 40px; overflow-y: auto; }
         
         .nav-link { padding: 12px; margin: 8px 0; border-radius: 8px; cursor: pointer; transition: 0.2s; }
-        .nav-link:hover { background: rgba(0, 162, 255, 0.1); color: var(--primary); }
-        .nav-link.active { background: var(--primary); color: white; }
+        .nav-link:hover, .nav-link.active { background: var(--primary); color: white; }
+
+        .avatar-circle { width: 100px; height: 100px; border-radius: 50%; background: #333; margin: 0 auto 15px; overflow: hidden; border: 3px solid var(--primary); }
+        .avatar-circle img { width: 100%; height: 100%; object-fit: cover; }
+
+        .card { background: var(--panel); border: 1px solid var(--border); padding: 15px; border-radius: 10px; margin-top: 10px; }
     </style>
 </head>
 <body id="body">
@@ -60,67 +54,78 @@
     <div id="auth-screen" class="auth-container">
         <div class="auth-box">
             <h1 id="title">CRONOS <span style="color:var(--primary)">7</span></h1>
-            <p id="subtitle" style="color: #666; font-size: 14px; margin-bottom: 20px;">Crie sua conta de desenvolvedor</p>
-
-            <div id="register-fields">
-                <input type="text" id="reg-name" placeholder="Nome Completo">
-            </div>
-            <input type="email" id="email" placeholder="E-mail">
-            <input type="password" id="pass" placeholder="Senha">
+            <p id="subtitle" style="color:#666; font-size:14px;">Create your developer account</p>
             
-            <button class="btn-main" id="main-btn" onclick="enterApp()">CADASTRAR</button>
-
-            <div class="divider">OU ENTRE COM</div>
-
-            <button class="social-btn btn-google" onclick="alert('Conectando ao Google API...')">
-                <span>🌐</span> Google
-            </button>
-            <button class="social-btn btn-github" onclick="alert('Conectando ao GitHub API...')">
-                <span>🐙</span> GitHub
-            </button>
-
-            <div class="switch-mode">
-                <span id="switch-text">Já tem uma conta?</span> <b onclick="toggleAuth()" id="switch-link">Clique em entrar</b>
+            <div id="reg-fields">
+                <input type="text" id="reg-name" placeholder="Full Name">
             </div>
+            <input type="email" id="email" placeholder="Email Address">
+            <input type="password" id="pass" placeholder="Password">
+            <button class="btn-main" id="main-btn" onclick="enterApp()">SIGN UP</button>
+            
+            <p style="margin: 15px 0; font-size: 12px; color: #555;">OR CONNECT WITH</p>
+            
+            <button class="social-btn" onclick="enterApp()">🌐 Continue with Google</button>
+            <button class="social-btn" onclick="enterApp()">🐙 Continue with GitHub</button>
+
+            <p style="margin-top: 20px; font-size: 14px; color: #888;">
+                <span id="switch-text">Already have an account?</span> 
+                <b style="color:var(--primary); cursor:pointer" onclick="toggleAuth()" id="switch-link">Log in here</b>
+            </p>
         </div>
     </div>
 
     <div id="app-screen" class="main-app hidden">
         <div class="sidebar">
             <h2 style="color: var(--primary);">CRONOS 7</h2>
-            <div id="user-info" style="margin-bottom: 30px; border-bottom: 1px solid var(--border); padding-bottom: 20px;">
-                <b id="display-user">@Usuario</b><br>
-                <small style="color: #666;">Developer</small>
-            </div>
-            
-            <div class="nav-link active" onclick="showTab('feed')">🏠 Feed Comunitário</div>
-            <div class="nav-link" onclick="showTab('profile')">👤 Meu Perfil</div>
-            <div class="nav-link" onclick="showTab('create')">🛠️ Criar (Site/Jogo)</div>
-            <div class="nav-link" onclick="showTab('settings')">⚙️ Configurações</div>
-            
-            <button style="margin-top: auto; background: #ff4444; padding: 10px; border-radius: 6px; border:none; color:white; cursor:pointer;" onclick="logout()">Sair</button>
+            <div class="nav-link active" onclick="showTab('feed')">🏠 Community Feed</div>
+            <div class="nav-link" onclick="showTab('profile')">👤 My Profile</div>
+            <div class="nav-link" onclick="showTab('create')">🛠️ Create Project</div>
+            <div class="nav-link" onclick="showTab('settings')">⚙️ Settings</div>
+            <button style="margin-top: 50px; background: #ff4444;" class="btn-main" onclick="logout()">Log Out</button>
         </div>
 
-        <div class="content" id="main-content">
+        <div class="content">
             <div id="tab-feed">
-                <h1>Feed Global</h1>
-                <p style="color: #888;">Veja o que a comunidade Cronos 7 está criando.</p>
-                <div style="background: var(--panel); padding: 20px; border-radius: 10px; border: 1px solid var(--border);">
-                    <b>@Mishk19000</b> publicou um novo <i>Script de Física</i>.
+                <h1>Global Feed</h1>
+                <p style="color:#888;">See what other developers are building.</p>
+                <div class="card">
+                    <b>@Mishk19000</b> published a new <i>Physics Script</i>.
                 </div>
             </div>
 
             <div id="tab-profile" class="hidden">
-                <h1 id="p-name">Nome do Usuário</h1>
-                <p>Seus projetos e seguidores aparecerão aqui.</p>
+                <div class="avatar-circle">
+                    <img id="p-img" src="https://api.dicebear.com/7.x/avataaars/svg?seed=Miguel" alt="Avatar">
+                </div>
+                <h1 id="p-name">Miguel Saldanha</h1>
+                <p id="p-bio">Cronos 7 Developer | Physics Student</p>
+                <div id="user-projects">
+                    <h3>My Projects</h3>
+                    <p style="font-size:14px; color:#555;">No projects published yet.</p>
+                </div>
+            </div>
+
+            <div id="tab-create" class="hidden">
+                <h1>Create New</h1>
+                <p>Build your next big idea.</p>
+                <input type="text" placeholder="Project Title">
+                <select style="width:100%; padding:12px; background:#000; color:white; border:1px solid #333; border-radius:6px;">
+                    <option>Roblox Game (Luau)</option>
+                    <option>Web Site (HTML/CSS)</option>
+                    <option>App (Python)</option>
+                </select>
+                <textarea rows="5" style="width:100%; margin-top:10px; background:#000; color:white; border:1px solid #333; padding:10px; border-radius:6px;" placeholder="Describe your project or paste code..."></textarea>
+                <button class="btn-main">Publish Project</button>
             </div>
 
             <div id="tab-settings" class="hidden">
-                <h1>Configurações</h1>
-                <p>Personalize sua experiência.</p>
-                <button class="btn-main" style="width: 200px; background: #555;" onclick="document.getElementById('body').classList.toggle('light-mode')">
-                    Modo Claro / Escuro
-                </button>
+                <h1>Settings</h1>
+                <button class="btn-main" style="background:#555" onclick="document.getElementById('body').classList.toggle('light-mode')">Toggle Light/Dark Mode</button>
+                <h3>Edit Profile</h3>
+                <input type="text" id="new-name" placeholder="Change Display Name">
+                <input type="text" id="new-pic" placeholder="Profile Picture URL">
+                <button class="btn-main" onclick="saveSettings()">Save Changes</button>
             </div>
         </div>
     </div>
@@ -130,43 +135,47 @@
 
         function toggleAuth() {
             isLogin = !isLogin;
-            document.getElementById('title').innerHTML = isLogin ? "LOGIN" : "CRONOS <span style='color:var(--primary)'>7</span>";
-            document.getElementById('subtitle').innerText = isLogin ? "Bem-vindo de volta" : "Crie sua conta de desenvolvedor";
-            document.getElementById('main-btn').innerText = isLogin ? "ENTRAR" : "CADASTRAR";
-            document.getElementById('register-fields').classList.toggle('hidden', isLogin);
-            document.getElementById('switch-text').innerText = isLogin ? "Não tem uma conta?" : "Já tem uma conta?";
-            document.getElementById('switch-link').innerText = isLogin ? "Cadastre-se" : "Clique em entrar";
+            document.getElementById('title').innerHTML = isLogin ? "LOG IN" : "CRONOS <span style='color:var(--primary)'>7</span>";
+            document.getElementById('subtitle').innerText = isLogin ? "Welcome back!" : "Create your developer account";
+            document.getElementById('main-btn').innerText = isLogin ? "LOG IN" : "SIGN UP";
+            document.getElementById('reg-fields').classList.toggle('hidden', isLogin);
+            document.getElementById('switch-text').innerText = isLogin ? "Don't have an account?" : "Already have an account?";
+            document.getElementById('switch-link').innerText = isLogin ? "Sign up here" : "Log in here";
         }
 
         function enterApp() {
-            const name = document.getElementById('reg-name').value || "Usuário";
-            localStorage.setItem('cronos_user', name);
-            
+            const name = document.getElementById('reg-name').value || "Developer";
+            localStorage.setItem('user', name);
             document.getElementById('auth-screen').classList.add('hidden');
             document.getElementById('app-screen').classList.remove('hidden');
-            document.getElementById('display-user').innerText = "@" + name;
             document.getElementById('p-name').innerText = name;
         }
 
+        function saveSettings() {
+            const name = document.getElementById('new-name').value;
+            const pic = document.getElementById('new-pic').value;
+            if(name) document.getElementById('p-name').innerText = name;
+            if(pic) document.getElementById('p-img').src = pic;
+            alert("Profile Updated!");
+        }
+
         function showTab(tab) {
-            const tabs = ['tab-feed', 'tab-profile', 'tab-settings'];
-            tabs.forEach(t => document.getElementById(t).classList.add('hidden'));
+            const tabs = ['feed', 'profile', 'create', 'settings'];
+            tabs.forEach(t => document.getElementById('tab-' + t).classList.add('hidden'));
             document.getElementById('tab-' + tab).classList.remove('hidden');
             
-            // Atualiza classe ativa
-            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            // Manage active link style
+            document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
             event.currentTarget.classList.add('active');
         }
 
-        function logout() {
-            localStorage.removeItem('cronos_user');
-            location.reload();
+        function logout() { 
+            localStorage.clear(); 
+            location.reload(); 
         }
 
-        // Verifica se já está logado
-        if(localStorage.getItem('cronos_user')) {
-            enterApp();
-        }
+        // Auto-login check
+        if(localStorage.getItem('user')) enterApp();
     </script>
 </body>
 </html>
