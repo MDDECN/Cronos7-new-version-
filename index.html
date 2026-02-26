@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cronos 7 | Global Dev Hub</title>
+    <title>Cronos 7 | Personal Blog Hub</title>
     <style>
         :root {
             --primary: #00a2ff;
@@ -24,14 +24,14 @@
         .hidden { display: none !important; }
 
         /* AUTH SCREEN */
-        .auth-container { height: 100vh; display: flex; justify-content: center; align-items: center; background: radial-gradient(circle at center, #111 0%, #000 100%); }
+        .auth-container { height: 100vh; display: flex; justify(content): center; align-items: center; background: radial-gradient(circle at center, #111 0%, #000 100%); }
         .auth-box { background: var(--panel); padding: 30px; border-radius: 15px; border: 1px solid var(--border); width: 100%; max-width: 380px; text-align: center; }
-        
-        input { width: 100%; padding: 12px; margin: 10px 0; background: #000; border: 1px solid #333; color: white; border-radius: 6px; box-sizing: border-box; }
-        body.light-mode input { background: #fff; border: 1px solid #ccc; color: #000; }
-        
+
+        input, textarea { width: 100%; padding: 12px; margin: 10px 0; background: #000; border: 1px solid #333; color: white; border-radius: 6px; box-sizing: border-box; }
+        body.light-mode input, body.light-mode textarea { background: #fff; border: 1px solid #ccc; color: #000; }
+
         .btn-main { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 10px; }
-        
+
         .social-btn { width: 100%; padding: 10px; margin-bottom: 8px; border-radius: 6px; border: 1px solid #333; cursor: pointer; background: transparent; color: white; display: flex; align-items: center; justify-content: center; gap: 10px; }
         body.light-mode .social-btn { color: #333; border-color: #ccc; }
 
@@ -39,38 +39,34 @@
         .main-app { display: grid; grid-template-columns: 260px 1fr; height: 100vh; }
         .sidebar { background: var(--panel); border-right: 1px solid var(--border); padding: 25px; }
         .content { padding: 40px; overflow-y: auto; }
-        
+
         .nav-link { padding: 12px; margin: 8px 0; border-radius: 8px; cursor: pointer; transition: 0.2s; }
         .nav-link:hover, .nav-link.active { background: var(--primary); color: white; }
 
         .avatar-circle { width: 100px; height: 100px; border-radius: 50%; background: #333; margin: 0 auto 15px; overflow: hidden; border: 3px solid var(--primary); }
         .avatar-circle img { width: 100%; height: 100%; object-fit: cover; }
 
-        .card { background: var(--panel); border: 1px solid var(--border); padding: 15px; border-radius: 10px; margin-top: 10px; }
+        .card { background: var(--panel); border: 1px solid var(--border); padding: 20px; border-radius: 10px; margin-top: 15px; }
+        .post-title { color: var(--primary); font-size: 1.2rem; margin-bottom: 5px; display: block; }
     </style>
 </head>
 <body id="body">
 
     <div id="auth-screen" class="auth-container">
         <div class="auth-box">
-            <h1 id="title">CRONOS <span style="color:var(--primary)">7</span></h1>
-            <p id="subtitle" style="color:#666; font-size:14px;">Create your developer account</p>
-            
-            <div id="reg-fields">
-                <input type="text" id="reg-name" placeholder="Full Name">
-            </div>
-            <input type="email" id="email" placeholder="Email Address">
-            <input type="password" id="pass" placeholder="Password">
-            <button class="btn-main" id="main-btn" onclick="enterApp()">SIGN UP</button>
-            
-            <p style="margin: 15px 0; font-size: 12px; color: #555;">OR CONNECT WITH</p>
-            
-            <button class="social-btn" onclick="enterApp()">🌐 Continue with Google</button>
-            <button class="social-btn" onclick="enterApp()">🐙 Continue with GitHub</button>
+            <h1>CRONOS <span style="color:var(--primary)">7</span></h1>
+            <p id="subtitle" style="color:#666; font-size:14px;">Your personal blog space</p>
 
-            <p style="margin-top: 20px; font-size: 14px; color: #888;">
-                <span id="switch-text">Already have an account?</span> 
-                <b style="color:var(--primary); cursor:pointer" onclick="toggleAuth()" id="switch-link">Log in here</b>
+            <div id="reg-fields">
+                <input type="text" id="reg-name" placeholder="Author Name">
+            </div>
+            <input type="email" id="email" placeholder="Email">
+            <input type="password" id="pass" placeholder="Password">
+            <button class="btn-main" id="main-btn" onclick="enterApp()">START BLOGGING</button>
+
+            <p style="margin: 20px 0; font-size: 14px; color: #888;">
+                <span id="switch-text">New here?</span> 
+                <b style="color:var(--primary); cursor:pointer" onclick="toggleAuth()" id="switch-link">Sign up</b>
             </p>
         </div>
     </div>
@@ -78,19 +74,23 @@
     <div id="app-screen" class="main-app hidden">
         <div class="sidebar">
             <h2 style="color: var(--primary);">CRONOS 7</h2>
-            <div class="nav-link active" onclick="showTab('feed')">🏠 Community Feed</div>
+            <div class="nav-link active" onclick="showTab('feed')">📰 Blog Feed</div>
             <div class="nav-link" onclick="showTab('profile')">👤 My Profile</div>
-            <div class="nav-link" onclick="showTab('create')">🛠️ Create Project</div>
+            <div class="nav-link" onclick="showTab('create')">✍️ Write Post</div>
             <div class="nav-link" onclick="showTab('settings')">⚙️ Settings</div>
             <button style="margin-top: 50px; background: #ff4444;" class="btn-main" onclick="logout()">Log Out</button>
         </div>
 
         <div class="content">
             <div id="tab-feed">
-                <h1>Global Feed</h1>
-                <p style="color:#888;">See what other developers are building.</p>
-                <div class="card">
-                    <b>@Mishk19000</b> published a new <i>Physics Script</i>.
+                <h1>Community Feed</h1>
+                <p style="color:#888;">Discover stories from around the world.</p>
+                <div id="global-posts">
+                    <div class="card">
+                        <b class="post-title">The Future of AI in Blogging</b>
+                        <small>by @Mishk19000 • 2 mins ago</small>
+                        <p style="font-size: 14px; opacity: 0.8;">Technology is changing how we share our thoughts...</p>
+                    </div>
                 </div>
             </div>
 
@@ -99,33 +99,30 @@
                     <img id="p-img" src="https://api.dicebear.com/7.x/avataaars/svg?seed=Miguel" alt="Avatar">
                 </div>
                 <h1 id="p-name">Miguel Saldanha</h1>
-                <p id="p-bio">Cronos 7 Developer | Physics Student</p>
-                <div id="user-projects">
-                    <h3>My Projects</h3>
-                    <p style="font-size:14px; color:#555;">No projects published yet.</p>
+                <p id="p-bio">Cronos 7 Member | Blogger & Content Creator</p>
+                <div id="user-posts-container">
+                    <h3>My Published Stories</h3>
+                    <div id="my-posts-list">
+                        <p style="font-size:14px; color:#555;">No stories yet. Start writing!</p>
+                    </div>
                 </div>
             </div>
 
             <div id="tab-create" class="hidden">
-                <h1>Create New</h1>
-                <p>Build your next big idea.</p>
-                <input type="text" placeholder="Project Title">
-                <select style="width:100%; padding:12px; background:#000; color:white; border:1px solid #333; border-radius:6px;">
-                    <option>Roblox Game (Luau)</option>
-                    <option>Web Site (HTML/CSS)</option>
-                    <option>App (Python)</option>
-                </select>
-                <textarea rows="5" style="width:100%; margin-top:10px; background:#000; color:white; border:1px solid #333; padding:10px; border-radius:6px;" placeholder="Describe your project or paste code..."></textarea>
-                <button class="btn-main">Publish Project</button>
+                <h1>Write New Story</h1>
+                <p>Share your thoughts with the world.</p>
+                <input type="text" id="post-title-input" placeholder="Title of your story">
+                <textarea id="post-content-input" rows="8" placeholder="Write your content here..."></textarea>
+                <button class="btn-main" onclick="publishPost()">Publish Story</button>
             </div>
 
             <div id="tab-settings" class="hidden">
                 <h1>Settings</h1>
                 <button class="btn-main" style="background:#555" onclick="document.getElementById('body').classList.toggle('light-mode')">Toggle Light/Dark Mode</button>
-                <h3>Edit Profile</h3>
-                <input type="text" id="new-name" placeholder="Change Display Name">
+                <h3 style="margin-top:30px">Profile Details</h3>
+                <input type="text" id="new-name" placeholder="Change Author Name">
                 <input type="text" id="new-pic" placeholder="Profile Picture URL">
-                <button class="btn-main" onclick="saveSettings()">Save Changes</button>
+                <button class="btn-main" onclick="saveSettings()">Update Profile</button>
             </div>
         </div>
     </div>
@@ -135,26 +132,58 @@
 
         function toggleAuth() {
             isLogin = !isLogin;
-            document.getElementById('title').innerHTML = isLogin ? "LOG IN" : "CRONOS <span style='color:var(--primary)'>7</span>";
-            document.getElementById('subtitle').innerText = isLogin ? "Welcome back!" : "Create your developer account";
-            document.getElementById('main-btn').innerText = isLogin ? "LOG IN" : "SIGN UP";
+            document.getElementById('main-btn').innerText = isLogin ? "LOG IN" : "START BLOGGING";
             document.getElementById('reg-fields').classList.toggle('hidden', isLogin);
             document.getElementById('switch-text').innerText = isLogin ? "Don't have an account?" : "Already have an account?";
             document.getElementById('switch-link').innerText = isLogin ? "Sign up here" : "Log in here";
         }
 
         function enterApp() {
-            const name = document.getElementById('reg-name').value || "Developer";
+            const name = document.getElementById('reg-name').value || "Author";
             localStorage.setItem('user', name);
             document.getElementById('auth-screen').classList.add('hidden');
             document.getElementById('app-screen').classList.remove('hidden');
             document.getElementById('p-name').innerText = name;
         }
 
+        function publishPost() {
+            const title = document.getElementById('post-title-input').value;
+            const content = document.getElementById('post-content-input').value;
+            const author = localStorage.getItem('user') || "Miguel";
+
+            if(!title || !content) return alert("Please fill both Title and Content!");
+
+            const postHTML = `
+                <div class="card">
+                    <b class="post-title">${title}</b>
+                    <small>by @${author} • Just now</small>
+                    <p style="font-size: 14px; opacity: 0.8;">${content.substring(0, 100)}...</p>
+                </div>
+            `;
+
+            // Add to My Profile
+            const list = document.getElementById('my-posts-list');
+            if(list.innerText.includes("No stories")) list.innerHTML = "";
+            list.innerHTML = postHTML + list.innerHTML;
+
+            // Add to Feed
+            document.getElementById('global-posts').innerHTML = postHTML + document.getElementById('global-posts').innerHTML;
+
+            alert("Published successfully!");
+            showTab('feed');
+            
+            // Clear inputs
+            document.getElementById('post-title-input').value = "";
+            document.getElementById('post-content-input').value = "";
+        }
+
         function saveSettings() {
             const name = document.getElementById('new-name').value;
             const pic = document.getElementById('new-pic').value;
-            if(name) document.getElementById('p-name').innerText = name;
+            if(name) {
+                document.getElementById('p-name').innerText = name;
+                localStorage.setItem('user', name);
+            }
             if(pic) document.getElementById('p-img').src = pic;
             alert("Profile Updated!");
         }
@@ -163,10 +192,14 @@
             const tabs = ['feed', 'profile', 'create', 'settings'];
             tabs.forEach(t => document.getElementById('tab-' + t).classList.add('hidden'));
             document.getElementById('tab-' + tab).classList.remove('hidden');
-            
-            // Manage active link style
+
             document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
-            event.currentTarget.classList.add('active');
+            // Find the clicked link based on the tab name
+            const links = document.querySelectorAll('.nav-link');
+            if(tab === 'feed') links[0].classList.add('active');
+            if(tab === 'profile') links[1].classList.add('active');
+            if(tab === 'create') links[2].classList.add('active');
+            if(tab === 'settings') links[3].classList.add('active');
         }
 
         function logout() { 
@@ -174,7 +207,6 @@
             location.reload(); 
         }
 
-        // Auto-login check
         if(localStorage.getItem('user')) enterApp();
     </script>
 </body>
