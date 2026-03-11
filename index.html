@@ -3,36 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cronos 7 | Social  job Network & Research Network</title>
+    <title>Cronos 7 | Professional Social Network  done by CRONO7(mddecn)</title>
     <link rel="icon" type="image/jpeg" href="IMG-20260302-WA0005.jpg">
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
 
     <style>
-        :root { --primary: #00a2ff; --bg: #050505; --panel: #111; --text: #fff; --border: #222; --accent: #8a2be2; }
+        :root { --primary: #00a2ff; --bg: #050505; --panel: #111; --text: #fff; --border: #222; --dev: #ff4757; --art: #ffa502; --science: #2ed573; }
         body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; margin: 0; overflow-x: hidden; }
         .hidden { display: none !important; }
         
-        .sidebar { background: var(--panel); border-right: 1px solid var(--border); padding: 25px; display: flex; flex-direction: column; width: 280px; position: fixed; height: 100vh; }
-        .logo-img { width: 120px; mix-blend-mode: lighten; margin-bottom: 20px; align-self: center; }
+        .sidebar { background: var(--panel); border-right: 1px solid var(--border); padding: 25px; display: flex; flex-direction: column; width: 280px; position: fixed; height: 100vh; z-index: 100; }
+        .logo-img { width: 100px; mix-blend-mode: lighten; margin-bottom: 20px; align-self: center; }
         .nav-link { padding: 12px; margin: 5px 0; border-radius: 8px; cursor: pointer; color: #aaa; transition: 0.2s; }
         .nav-link:hover { background: #1a1a1a; color: #fff; }
         .nav-link.active { background: var(--primary); color: #fff; font-weight: bold; }
 
         .content { margin-left: 280px; padding: 40px; background: #080808; min-height: 100vh; }
 
-        .card { background: var(--panel); border: 1px solid var(--border); padding: 25px; border-radius: 12px; margin-bottom: 25px; position: relative; }
-        .theory-tag { background: var(--accent); color: white; padding: 3px 8px; border-radius: 4px; font-size: 10px; text-transform: uppercase; margin-bottom: 10px; display: inline-block; }
-        .post-title { color: var(--primary); font-size: 1.4rem; font-weight: bold; display: block; margin-bottom: 10px; }
-        .author-box { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; }
-        .follow-btn { background: none; border: 1px solid var(--primary); color: var(--primary); padding: 4px 10px; border-radius: 20px; cursor: pointer; font-size: 12px; }
-        .follow-btn.following { background: var(--primary); color: white; }
+        .search-bar { width: 100%; max-width: 500px; margin-bottom: 30px; position: relative; }
+        .search-bar input { padding-left: 40px; background: #111; border: 1px solid #333; }
 
-        .profile-header { background: linear-gradient(45deg, #111, #222); padding: 30px; border-radius: 15px; border: 1px solid var(--border); margin-bottom: 30px; }
+        .card { background: var(--panel); border: 1px solid var(--border); padding: 25px; border-radius: 12px; margin-bottom: 25px; position: relative; }
+        .user-avatar { width: 45px; height: 45px; border-radius: 50%; background: #333; object-fit: cover; border: 2px solid var(--primary); }
+        .badge { padding: 4px 10px; border-radius: 4px; font-size: 10px; text-transform: uppercase; margin-bottom: 10px; display: inline-block; font-weight: bold; }
+        .badge-dev { background: var(--dev); }
+        .badge-art { background: var(--art); }
+        .badge-science { background: var(--science); }
         
+        .profile-header { background: linear-gradient(135deg, #111 0%, #1a1a1a 100%); padding: 30px; border-radius: 15px; border: 1px solid var(--border); margin-bottom: 30px; text-align: center; }
+        .profile-pic-large { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; margin-bottom: 15px; border: 3px solid var(--primary); }
+        .stats-box { display: flex; justify-content: center; gap: 20px; margin: 15px 0; font-size: 0.9rem; color: #aaa; }
+
         .btn-main { padding: 12px 25px; background: var(--primary); color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; }
-        input, textarea { width: 100%; padding: 12px; margin: 10px 0; background: #000; border: 1px solid #333; color: #fff; border-radius: 6px; }
+        input, textarea, select { width: 100%; padding: 12px; margin: 10px 0; background: #000; border: 1px solid #333; color: #fff; border-radius: 6px; box-sizing: border-box; }
 
         .auth-container { height: 100vh; display: flex; justify-content: center; align-items: center; }
         .auth-box { background: var(--panel); padding: 40px; border-radius: 15px; width: 350px; text-align: center; border: 1px solid var(--border); }
@@ -42,12 +47,12 @@
 
     <div id="auth-screen" class="auth-container">
         <div class="auth-box">
-            <img src="IMG-20260302-WA0005.jpg" class="logo-img" style="width: 100px;">
+            <img src="IMG-20260302-WA0005.jpg" class="logo-img">
             <h1>CRONOS 7</h1>
-            <input type="text" id="reg-name" placeholder="Unique Username">
+            <input type="text" id="reg-name" placeholder="Username">
             <input type="email" id="email" placeholder="Email">
-            <input type="password" id="pass" placeholder="Password (6+ chars)">
-            <button class="btn-main" onclick="handleAuth()" style="width:100%">ACCESS SYSTEM</button>
+            <input type="password" id="pass" placeholder="Password">
+            <button class="btn-main" onclick="handleAuth()" style="width:100%">JOIN WORKFORCE</button>
             <p id="auth-error" style="color:red; font-size:12px; margin-top:10px;"></p>
         </div>
     </div>
@@ -55,34 +60,48 @@
     <div id="app-screen" class="hidden">
         <div class="sidebar">
             <img src="IMG-20260302-WA0005.jpg" class="logo-img">
-            <div class="nav-link active" id="link-feed" onclick="showTab('feed')">RESEARCH FEED</div>
-            <div class="nav-link" id="link-create" onclick="showTab('create')">SUBMIT THEORY</div>
-            <div class="nav-link" id="link-profile" onclick="showTab('profile')">MY STATION (PROFILE)</div>
-            <button class="btn-main" onclick="logout()" style="margin-top:auto; background:#333">LOGOUT</button>
+            <div class="nav-link active" id="link-feed" onclick="showTab('feed')">WORK FEED</div>
+            <div class="nav-link" id="link-create" onclick="showTab('create')">POST WORK</div>
+            <div class="nav-link" id="link-profile" onclick="showTab('profile')">MY STATION</div>
+            <button class="btn-main" onclick="logout()" style="margin-top:auto; background:#222">DISCONNECT</button>
         </div>
 
         <div class="content">
             <div id="tab-feed">
-                <h1>Theoretical Feed</h1>
-                <div id="posts-container">Scanning frequencies...</div>
+                <div class="search-bar">
+                    <input type="text" id="search-input" placeholder="Search professionals or keywords..." onkeyup="filterFeed()">
+                </div>
+                <div id="posts-container">Establishing connection...</div>
             </div>
 
             <div id="tab-create" class="hidden">
-                <h1>New Physics Theory</h1>
-                <input type="text" id="post-title" placeholder="Theory Title (e.g. Quantum Gravity Observations)">
-                <textarea id="post-content" rows="10" placeholder="Describe your findings or formulas here..."></textarea>
-                <label><input type="checkbox" id="is-theory" checked> Tag as Scientific Theory</label><br><br>
-                <button class="btn-main" onclick="publishPost()">BROADCAST DATA</button>
+                <h1>Broadcast Project</h1>
+                <input type="text" id="post-title" placeholder="Project Title">
+                <select id="post-category">
+                    <option value="science">Science</option>
+                    <option value="dev">Programming</option>
+                    <option value="art">Art</option>
+                </select>
+                <textarea id="post-content" rows="10" placeholder="Content..."></textarea>
+                <button class="btn-main" onclick="publishPost()">BROADCAST</button>
             </div>
 
             <div id="tab-profile" class="hidden">
                 <div class="profile-header">
+                    <img id="prof-pic-display" src="https://via.placeholder.com/100" class="profile-pic-large">
                     <h2 id="prof-user">@username</h2>
-                    <p id="prof-bio" style="color:#888">No bio established.</p>
+                    <span id="prof-role" class="badge">PROFESSION</span>
+                    <div class="stats-box">
+                        <span><b id="count-following">0</b> Following</span>
+                        <span><b id="count-followers">0</b> Followers</span>
+                    </div>
+                    <p id="prof-bio" style="color:#888;">No bio.</p>
                 </div>
-                <h3>Edit Profile</h3>
-                <textarea id="edit-bio" placeholder="Researcher Bio / Field of Study"></textarea>
-                <button class="btn-main" onclick="updateProfile()">SAVE CHANGES</button>
+                <h3>Edit Station</h3>
+                <input type="text" id="edit-pic" placeholder="Profile Picture URL (e.g. https://...)">
+                <input type="text" id="edit-role" placeholder="Your Professional Title">
+                <textarea id="edit-bio" placeholder="Professional Bio..."></textarea>
+                <button class="btn-main" onclick="updateProfile()">SAVE SETTINGS</button>
             </div>
         </div>
     </div>
@@ -101,7 +120,7 @@
         const db = firebase.firestore();
         const auth = firebase.auth();
         let userProfile = null;
-        let following = [];
+        let allPosts = [];
 
         async function handleAuth() {
             const email = document.getElementById('email').value;
@@ -109,21 +128,20 @@
             const name = document.getElementById('reg-name').value.trim();
             try {
                 await auth.signInWithEmailAndPassword(email, pass).catch(async (err) => {
-                    if (err.code === 'auth/user-not-found' || err.code === 'auth/invalid-credential') {
-                        if(!name) throw new Error("Enter a username to register.");
-                        const newUser = await auth.createUserWithEmailAndPassword(email, pass);
-                        await db.collection("users").doc(newUser.user.uid).set({ 
-                            username: name, bio: "Physics Researcher", joined: new Date().toISOString() 
-                        });
-                    } else throw err;
+                    const newUser = await auth.createUserWithEmailAndPassword(email, pass);
+                    await db.collection("users").doc(newUser.user.uid).set({ 
+                        username: name, bio: "Professional Member", role: "Specialist", 
+                        pic: "https://via.placeholder.com/100", joined: new Date().toISOString() 
+                    });
                 });
             } catch (e) { document.getElementById('auth-error').innerText = e.message; }
         }
 
         async function updateProfile() {
-            const newBio = document.getElementById('edit-bio').value;
-            await db.collection("users").doc(auth.currentUser.uid).update({ bio: newBio });
-            alert("Station Profile Updated!");
+            const pic = document.getElementById('edit-pic').value;
+            const bio = document.getElementById('edit-bio').value;
+            const role = document.getElementById('edit-role').value;
+            await db.collection("users").doc(auth.currentUser.uid).update({ pic, bio, role });
             location.reload();
         }
 
@@ -131,58 +149,61 @@
             const myId = auth.currentUser.uid;
             const ref = db.collection("follows").doc(`${myId}_${targetId}`);
             const doc = await ref.get();
-            if(doc.exists) {
-                await ref.delete();
-            } else {
-                await ref.set({ follower: myId, following: targetId });
-            }
+            if(doc.exists) await ref.delete();
+            else await ref.set({ follower: myId, following: targetId });
+            loadStats();
+        }
+
+        async function loadStats() {
+            const ing = await db.collection("follows").where("follower", "==", auth.currentUser.uid).get();
+            const ers = await db.collection("follows").where("following", "==", auth.currentUser.uid).get();
+            document.getElementById('count-following').innerText = ing.size;
+            document.getElementById('count-followers').innerText = ers.size;
         }
 
         async function publishPost() {
             const title = document.getElementById('post-title').value;
+            const category = document.getElementById('post-category').value;
             const body = document.getElementById('post-content').value;
-            const isTheory = document.getElementById('is-theory').checked;
-            if(!title || !body) return alert("Data fields cannot be empty.");
-
             await db.collection("posts").add({
-                title, body, isTheory,
-                author: userProfile.username,
-                authorId: auth.currentUser.uid,
-                likes: 0,
-                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                title, body, category, author: userProfile.username,
+                authorId: auth.currentUser.uid, authorRole: userProfile.role,
+                authorPic: userProfile.pic, likes: 0, timestamp: firebase.firestore.FieldValue.serverTimestamp()
             });
             showTab('feed');
         }
 
-        function loadFeed() {
-            db.collection("posts").orderBy("timestamp", "desc").onSnapshot(async snap => {
-                const container = document.getElementById('posts-container');
-                container.innerHTML = "";
-                
-                const fSnap = await db.collection("follows").where("follower", "==", auth.currentUser.uid).get();
-                following = fSnap.docs.map(d => d.data().following);
-
-                snap.forEach(doc => {
-                    const post = doc.data();
-                    const id = doc.id;
-                    const isFollowing = following.includes(post.authorId);
-                    const isMe = post.authorId === auth.currentUser.uid;
-
-                    container.innerHTML += `
-                        <div class="card">
-                            ${post.isTheory ? '<span class="theory-tag">Physics Theory</span>' : ''}
-                            <span class="post-title">${post.title}</span>
-                            <div class="author-box">
-                                <b>@${post.author}</b>
-                                ${!isMe ? `<button class="follow-btn ${isFollowing ? 'following' : ''}" onclick="toggleFollow('${post.authorId}')">
-                                    ${isFollowing ? 'Following' : 'Follow'}
-                                </button>` : ''}
+        function renderPosts(posts) {
+            const container = document.getElementById('posts-container');
+            container.innerHTML = "";
+            posts.forEach(doc => {
+                const post = doc.data();
+                const isMe = post.authorId === auth.currentUser.uid;
+                container.innerHTML += `
+                    <div class="card">
+                        <div class="author-info">
+                            <img src="${post.authorPic || 'https://via.placeholder.com/100'}" class="user-avatar">
+                            <div>
+                                <b>@${post.author}</b> <span class="role-text">• ${post.authorRole}</span><br>
+                                <span class="badge badge-${post.category}">${post.category}</span>
                             </div>
-                            <p style="white-space: pre-wrap; color:#ccc">${post.body}</p>
-                            <button class="action-btn" onclick="likePost('${id}', ${post.likes})">👍 ${post.likes}</button>
-                        </div>`;
-                });
+                            ${!isMe ? `<button class="follow-btn" onclick="toggleFollow('${post.authorId}')">Connect</button>` : ''}
+                        </div>
+                        <span class="post-title">${post.title}</span>
+                        <p style="white-space: pre-wrap; color:#ccc;">${post.body}</p>
+                    </div>`;
             });
+        }
+
+        function filterFeed() {
+            const query = document.getElementById('search-input').value.toLowerCase();
+            const filtered = allPosts.filter(doc => {
+                const data = doc.data();
+                return data.author.toLowerCase().includes(query) || 
+                       data.title.toLowerCase().includes(query) || 
+                       data.authorRole.toLowerCase().includes(query);
+            });
+            renderPosts(filtered);
         }
 
         auth.onAuthStateChanged(async user => {
@@ -193,7 +214,13 @@
                 document.getElementById('app-screen').classList.remove('hidden');
                 document.getElementById('prof-user').innerText = "@" + userProfile.username;
                 document.getElementById('prof-bio').innerText = userProfile.bio;
-                loadFeed();
+                document.getElementById('prof-role').innerText = userProfile.role;
+                document.getElementById('prof-pic-display').src = userProfile.pic;
+                loadStats();
+                db.collection("posts").orderBy("timestamp", "desc").onSnapshot(snap => {
+                    allPosts = snap.docs;
+                    filterFeed();
+                });
             }
         });
 
@@ -204,7 +231,6 @@
             });
         }
         function logout() { auth.signOut().then(() => location.reload()); }
-        async function likePost(id, c) { await db.collection("posts").doc(id).update({ likes: c + 1 }); }
     </script>
 </body>
 </html>
