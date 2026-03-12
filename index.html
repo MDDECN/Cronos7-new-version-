@@ -11,16 +11,8 @@
 
     <style>
         :root { 
-            --primary: #00a2ff; 
-            --bg: #050505; 
-            --panel: #111; 
-            --text: #fff; 
-            --border: #222; 
-            --dev: #ff4757; 
-            --art: #ffa502; 
-            --science: #2ed573; 
-            --phil: #a29bfe;
-            --danger: #ff4444;
+            --primary: #00a2ff; --bg: #050505; --panel: #111; --text: #fff; --border: #222; 
+            --dev: #ff4757; --art: #ffa502; --science: #2ed573; --phil: #a29bfe; --danger: #ff4444;
         }
         body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; margin: 0; overflow-x: hidden; }
         .hidden { display: none !important; }
@@ -32,14 +24,12 @@
         .nav-link.active { background: var(--primary); color: #fff; }
 
         .content { margin-left: 280px; padding: 40px; background: #080808; min-height: 100vh; }
-
         .search-container { width: 100%; max-width: 600px; margin-bottom: 30px; }
         .search-container input { width: 100%; padding: 15px; background: #111; border: 1px solid #333; color: white; border-radius: 30px; outline: none; }
 
         .card { background: var(--panel); border: 1px solid var(--border); padding: 25px; border-radius: 12px; margin-bottom: 20px; position: relative; }
-        
-        .delete-btn { position: absolute; top: 20px; right: 20px; background: none; border: none; color: var(--danger); cursor: pointer; font-size: 11px; font-weight: bold; opacity: 0.6; transition: 0.3s; text-transform: uppercase; }
-        .delete-btn:hover { opacity: 1; text-decoration: underline; }
+        .delete-btn { position: absolute; top: 20px; right: 20px; background: none; border: none; color: var(--danger); cursor: pointer; font-size: 11px; font-weight: bold; opacity: 0.6; }
+        .delete-btn:hover { opacity: 1; }
 
         .user-avatar { width: 50px; height: 50px; border-radius: 50%; background: #222; object-fit: cover; border: 2px solid var(--border); }
         .badge { padding: 4px 10px; border-radius: 4px; font-size: 10px; text-transform: uppercase; font-weight: bold; margin-bottom: 8px; display: inline-block; }
@@ -53,80 +43,72 @@
         .author-name { font-weight: bold; font-size: 1.1rem; color: var(--text); }
         .author-role { color: #666; font-size: 0.85rem; display: block; }
         
-        .follow-btn { background: var(--primary); color: white; border: none; padding: 6px 16px; border-radius: 20px; cursor: pointer; font-size: 13px; font-weight: bold; }
-        .follow-btn.following { background: transparent; border: 1px solid #444; color: #888; }
-
-        .profile-header { background: linear-gradient(135deg, #111, #1a1a1a); padding: 40px; border-radius: 15px; border: 1px solid var(--border); margin-bottom: 30px; text-align: center; }
-        .profile-pic-large { width: 110px; height: 110px; border-radius: 50%; object-fit: cover; border: 4px solid var(--primary); margin-bottom: 15px; }
-        .stats-box { display: flex; justify-content: center; gap: 30px; margin: 20px 0; border-top: 1px solid #222; padding-top: 20px; }
-        .stat-num { display: block; font-size: 1.2rem; font-weight: bold; color: var(--text); }
-        .stat-label { font-size: 0.8rem; color: #555; text-transform: uppercase; }
-
-        .btn-main { padding: 12px 25px; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        .btn-main { padding: 12px 25px; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
         input, textarea, select { width: 100%; padding: 12px; margin: 10px 0; background: #000; border: 1px solid #333; color: #fff; border-radius: 8px; box-sizing: border-box; }
 
+        .auth-container { height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; background: #000; }
         .auth-box { background: var(--panel); padding: 40px; border-radius: 15px; width: 350px; text-align: center; border: 1px solid var(--border); }
+        .toggle-auth { margin-top: 15px; color: var(--primary); cursor: pointer; font-size: 0.9rem; text-decoration: underline; }
     </style>
 </head>
 <body>
 
-    <div id="auth-screen" style="height: 100vh; display: flex; justify-content: center; align-items: center;">
+    <div id="auth-screen" class="auth-container">
         <div class="auth-box">
             <img src="IMG-20260302-WA0005.jpg" class="logo-img">
-            <h1>CRONOS 7</h1>
-            <input type="text" id="reg-name" placeholder="Choose Username">
-            <input type="email" id="email" placeholder="Email Address">
-            <input type="password" id="pass" placeholder="Secure Password">
-            <button class="btn-main" onclick="handleAuth()" style="width:100%">ENTER NETWORK</button>
-            <p id="auth-error" style="color:#ff4757; font-size:12px; margin-top:10px;"></p>
+            <h1 id="auth-title">ACCESS STATION</h1>
+            <div id="register-fields" class="hidden">
+                <input type="text" id="reg-username" placeholder="Unique Professional Handle (@)">
+            </div>
+            <input type="email" id="auth-email" placeholder="Email Address">
+            <input type="password" id="auth-pass" placeholder="Password">
+            <button class="btn-main" id="auth-btn" style="width:100%" onclick="handleAuth()">LOGIN</button>
+            <p id="auth-error" style="color:var(--danger); font-size:12px; margin-top:10px;"></p>
+            <p class="toggle-auth" id="auth-toggle-text" onclick="toggleAuthMode()">New researcher? Create account</p>
         </div>
     </div>
 
     <div id="app-screen" class="hidden">
         <div class="sidebar">
             <img src="IMG-20260302-WA0005.jpg" class="logo-img">
-            <div class="nav-link active" id="link-feed" onclick="showTab('feed')">FEED</div>
+            <div class="nav-link active" id="link-feed" onclick="showTab('feed')">RESEARCH FEED</div>
             <div class="nav-link" id="link-create" onclick="showTab('create')">BROADCAST</div>
-            <div class="nav-link" id="link-profile" onclick="showTab('profile')">STATION</div>
-            <button class="btn-main" onclick="logout()" style="margin-top:auto; background:#222">LOGOUT</button>
+            <div class="nav-link" id="link-profile" onclick="showTab('profile')">MY STATION</div>
+            <button class="btn-main" onclick="logout()" style="margin-top:auto; background:#222">DISCONNECT</button>
         </div>
 
         <div class="content">
             <div id="tab-feed">
                 <div class="search-container">
-                    <input type="text" id="search-input" placeholder="Find people, jobs or theories..." onkeyup="filterFeed()">
+                    <input type="text" id="search-input" placeholder="Search by name, role or title..." onkeyup="filterFeed()">
                 </div>
-                <div id="posts-container">Syncing network...</div>
+                <div id="posts-container">Establishing secure link...</div>
             </div>
 
             <div id="tab-create" class="hidden">
                 <h1>New Transmission</h1>
-                <input type="text" id="post-title" placeholder="Transmission Title">
+                <input type="text" id="post-title" placeholder="Research/Project Title">
                 <select id="post-category">
-                    <option value="science">Physics / Math / Science</option>
-                    <option value="dev">Programming / Tech</option>
-                    <option value="art">Art / Cinema / Acting</option>
-                    <option value="phil">Philosophy / Humanities</option>
+                    <option value="science">Physics / Mathematics</option>
+                    <option value="dev">Software Engineering</option>
+                    <option value="art">Arts / Cinema</option>
+                    <option value="phil">Philosophy</option>
                 </select>
-                <textarea id="post-content" rows="10" placeholder="What are you working on?"></textarea>
+                <textarea id="post-content" rows="10" placeholder="Describe your findings or work snippet..."></textarea>
                 <button class="btn-main" onclick="publishPost()">BROADCAST DATA</button>
             </div>
 
             <div id="tab-profile" class="hidden">
-                <div class="profile-header">
-                    <img id="prof-pic-display" src="https://via.placeholder.com/110" class="profile-pic-large">
-                    <h2 id="prof-user">@username</h2>
-                    <span id="prof-role" class="badge">PROFESSION</span>
-                    <div class="stats-box">
-                        <div class="stat-item"><span class="stat-num" id="count-following">0</span><span class="stat-label">Following</span></div>
-                        <div class="stat-item"><span class="stat-num" id="count-followers">0</span><span class="stat-label">Followers</span></div>
-                    </div>
+                <div style="text-align: center; margin-bottom: 30px;">
+                    <img id="prof-pic-display" src="" class="user-avatar" style="width: 110px; height: 110px; border: 4px solid var(--primary);">
+                    <h2 id="prof-user"></h2>
+                    <p id="prof-role-display" style="color: var(--primary); font-weight: bold;"></p>
                 </div>
                 <h3>Settings</h3>
                 <input type="text" id="edit-pic" placeholder="Profile Picture URL">
-                <input type="text" id="edit-role" placeholder="Your Title">
+                <input type="text" id="edit-role" placeholder="Professional Title">
                 <textarea id="edit-bio" placeholder="Professional Bio..."></textarea>
-                <button class="btn-main" onclick="updateProfile()">SAVE STATION DATA</button>
+                <button class="btn-main" onclick="updateProfile()">UPDATE STATION</button>
             </div>
         </div>
     </div>
@@ -144,32 +126,60 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
         const auth = firebase.auth();
+        let isRegisterMode = false;
         let userProfile = null;
         let allPosts = [];
-        let followingList = [];
 
-        async function handleAuth() {
-            const email = document.getElementById('email').value;
-            const pass = document.getElementById('pass').value;
-            const name = document.getElementById('reg-name').value.trim();
-            try {
-                await auth.signInWithEmailAndPassword(email, pass).catch(async (err) => {
-                    if(!name) throw new Error("Username required.");
-                    const newUser = await auth.createUserWithEmailAndPassword(email, pass);
-                    await db.collection("users").doc(newUser.user.uid).set({ 
-                        username: name, bio: "Member", role: "Specialist", 
-                        pic: "https://via.placeholder.com/110", joined: new Date().toISOString() 
-                    });
-                });
-            } catch (e) { document.getElementById('auth-error').innerText = e.message; }
+        function toggleAuthMode() {
+            isRegisterMode = !isRegisterMode;
+            document.getElementById('auth-title').innerText = isRegisterMode ? "REGISTER" : "ACCESS STATION";
+            document.getElementById('register-fields').classList.toggle('hidden', !isRegisterMode);
+            document.getElementById('auth-btn').innerText = isRegisterMode ? "CREATE ACCOUNT" : "LOGIN";
+            document.getElementById('auth-toggle-text').innerText = isRegisterMode ? "Already a member? Login" : "New researcher? Create account";
         }
 
-        async function deletePost(postId) {
-            if(confirm("Confirm deletion of this transmission?")) {
+        async function handleAuth() {
+            const email = document.getElementById('auth-email').value;
+            const pass = document.getElementById('auth-pass').value;
+            const errorEl = document.getElementById('auth-error');
+            errorEl.innerText = "";
+
+            if (isRegisterMode) {
+                const username = document.getElementById('reg-username').value.trim().toLowerCase();
+                if (username.length < 3) return errorEl.innerText = "Username too short.";
+                if (pass.length < 6) return errorEl.innerText = "Password must be 6+ chars.";
+                if (pass === username) return errorEl.innerText = "Password cannot be username.";
+
+                const nameCheck = await db.collection("users").where("username", "==", username).get();
+                if (!nameCheck.empty) return errorEl.innerText = "Username taken.";
+
                 try {
-                    await db.collection("posts").doc(postId).delete();
-                } catch (e) { alert("Error: " + e.message); }
+                    const res = await auth.createUserWithEmailAndPassword(email, pass);
+                    await db.collection("users").doc(res.user.uid).set({
+                        username: username, role: "Specialist", pic: "https://via.placeholder.com/110", bio: ""
+                    });
+                } catch (e) { errorEl.innerText = e.message; }
+            } else {
+                try { await auth.signInWithEmailAndPassword(email, pass); } 
+                catch (e) { errorEl.innerText = "Authentication failed."; }
             }
+        }
+
+        async function deletePost(id) {
+            if(confirm("Confirm deletion?")) await db.collection("posts").doc(id).delete();
+        }
+
+        async function publishPost() {
+            const title = document.getElementById('post-title').value;
+            const cat = document.getElementById('post-category').value;
+            const body = document.getElementById('post-content').value;
+            if(!title || !body) return;
+            await db.collection("posts").add({
+                title, body, category: cat, author: userProfile.username,
+                authorId: auth.currentUser.uid, authorRole: userProfile.role,
+                authorPic: userProfile.pic, timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            showTab('feed');
         }
 
         async function updateProfile() {
@@ -182,63 +192,6 @@
             location.reload();
         }
 
-        async function toggleFollow(targetId) {
-            const myId = auth.currentUser.uid;
-            const ref = db.collection("follows").doc(`${myId}_${targetId}`);
-            const doc = await ref.get();
-            if(doc.exists) await ref.delete();
-            else await ref.set({ follower: myId, following: targetId });
-            loadStats();
-        }
-
-        async function loadStats() {
-            const ing = await db.collection("follows").where("follower", "==", auth.currentUser.uid).get();
-            const ers = await db.collection("follows").where("following", "==", auth.currentUser.uid).get();
-            document.getElementById('count-following').innerText = ing.size;
-            document.getElementById('count-followers').innerText = ers.size;
-            followingList = ing.docs.map(d => d.data().following);
-        }
-
-        async function publishPost() {
-            const title = document.getElementById('post-title').value;
-            const category = document.getElementById('post-category').value;
-            const body = document.getElementById('post-content').value;
-            if(!title || !body) return;
-            await db.collection("posts").add({
-                title, body, category, author: userProfile.username,
-                authorId: auth.currentUser.uid, authorRole: userProfile.role,
-                authorPic: userProfile.pic, timestamp: firebase.firestore.FieldValue.serverTimestamp()
-            });
-            showTab('feed');
-        }
-
-        function renderPosts(docs) {
-            const container = document.getElementById('posts-container');
-            container.innerHTML = "";
-            docs.forEach(doc => {
-                const post = doc.data();
-                const id = doc.id;
-                const isMe = post.authorId === auth.currentUser.uid;
-                const isFollowing = followingList.includes(post.authorId);
-                
-                container.innerHTML += `
-                    <div class="card">
-                        ${isMe ? `<button class="delete-btn" onclick="deletePost('${id}')">Delete Transmission</button>` : ''}
-                        <div class="author-row">
-                            <img src="${post.authorPic}" class="user-avatar">
-                            <div class="author-meta">
-                                <span class="author-name">@${post.author}</span>
-                                <span class="author-role">${post.authorRole}</span>
-                            </div>
-                            ${!isMe ? `<button class="follow-btn ${isFollowing ? 'following' : ''}" onclick="toggleFollow('${post.authorId}')">${isFollowing ? 'Following' : 'Follow'}</button>` : ''}
-                        </div>
-                        <span class="badge badge-${post.category}">${post.category}</span>
-                        <div style="font-weight: bold; margin-bottom: 8px; color: var(--primary);">${post.title}</div>
-                        <p style="white-space: pre-wrap; color:#ddd; margin:0;">${post.body}</p>
-                    </div>`;
-            });
-        }
-
         function filterFeed() {
             const q = document.getElementById('search-input').value.toLowerCase();
             const filtered = allPosts.filter(d => {
@@ -248,6 +201,29 @@
             renderPosts(filtered);
         }
 
+        function renderPosts(docs) {
+            const container = document.getElementById('posts-container');
+            container.innerHTML = "";
+            docs.forEach(d => {
+                const p = d.data();
+                const isMe = p.authorId === auth.currentUser.uid;
+                container.innerHTML += `
+                    <div class="card">
+                        ${isMe ? `<button class="delete-btn" onclick="deletePost('${d.id}')">Delete</button>` : ''}
+                        <div class="author-row">
+                            <img src="${p.authorPic}" class="user-avatar">
+                            <div class="author-meta">
+                                <span class="author-name">@${p.author}</span>
+                                <span class="author-role">${p.authorRole}</span>
+                            </div>
+                        </div>
+                        <span class="badge badge-${p.category}">${p.category}</span>
+                        <div style="font-weight:bold; color:var(--primary); margin-bottom:5px;">${p.title}</div>
+                        <p style="white-space:pre-wrap; color:#ccc; margin:0;">${p.body}</p>
+                    </div>`;
+            });
+        }
+
         auth.onAuthStateChanged(async user => {
             if(user) {
                 const doc = await db.collection("users").doc(user.uid).get();
@@ -255,10 +231,16 @@
                 document.getElementById('auth-screen').classList.add('hidden');
                 document.getElementById('app-screen').classList.remove('hidden');
                 document.getElementById('prof-user').innerText = "@" + userProfile.username;
-                document.getElementById('prof-role').innerText = userProfile.role;
+                document.getElementById('prof-role-display').innerText = userProfile.role;
                 document.getElementById('prof-pic-display').src = userProfile.pic;
-                await loadStats();
-                db.collection("posts").orderBy("timestamp", "desc").onSnapshot(snap => { allPosts = snap.docs; filterFeed(); });
+                
+                db.collection("posts").orderBy("timestamp", "desc").onSnapshot(snap => {
+                    allPosts = snap.docs;
+                    filterFeed();
+                });
+            } else {
+                document.getElementById('auth-screen').classList.remove('hidden');
+                document.getElementById('app-screen').classList.add('hidden');
             }
         });
 
@@ -268,7 +250,7 @@
                 document.getElementById('link-'+id).classList.toggle('active', id === t);
             });
         }
-        function logout() { auth.signOut().then(() => location.reload()); }
+        function logout() { auth.signOut(); }
     </script>
 </body>
 </html>
