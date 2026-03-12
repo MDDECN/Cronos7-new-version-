@@ -20,6 +20,7 @@
             --art: #ffa502; 
             --science: #2ed573; 
             --phil: #a29bfe;
+            --danger: #ff4444;
         }
         body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; margin: 0; overflow-x: hidden; }
         .hidden { display: none !important; }
@@ -33,11 +34,12 @@
         .content { margin-left: 280px; padding: 40px; background: #080808; min-height: 100vh; }
 
         .search-container { width: 100%; max-width: 600px; margin-bottom: 30px; }
-        .search-container input { width: 100%; padding: 15px; background: #111; border: 1px solid #333; color: white; border-radius: 30px; outline: none; transition: 0.3s; }
-        .search-container input:focus { border-color: var(--primary); background: #000; }
+        .search-container input { width: 100%; padding: 15px; background: #111; border: 1px solid #333; color: white; border-radius: 30px; outline: none; }
 
-        .card { background: var(--panel); border: 1px solid var(--border); padding: 25px; border-radius: 12px; margin-bottom: 20px; position: relative; animation: fadeIn 0.3s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .card { background: var(--panel); border: 1px solid var(--border); padding: 25px; border-radius: 12px; margin-bottom: 20px; position: relative; }
+        
+        .delete-btn { position: absolute; top: 20px; right: 20px; background: none; border: none; color: var(--danger); cursor: pointer; font-size: 11px; font-weight: bold; opacity: 0.6; transition: 0.3s; text-transform: uppercase; }
+        .delete-btn:hover { opacity: 1; text-decoration: underline; }
 
         .user-avatar { width: 50px; height: 50px; border-radius: 50%; background: #222; object-fit: cover; border: 2px solid var(--border); }
         .badge { padding: 4px 10px; border-radius: 4px; font-size: 10px; text-transform: uppercase; font-weight: bold; margin-bottom: 8px; display: inline-block; }
@@ -57,7 +59,6 @@
         .profile-header { background: linear-gradient(135deg, #111, #1a1a1a); padding: 40px; border-radius: 15px; border: 1px solid var(--border); margin-bottom: 30px; text-align: center; }
         .profile-pic-large { width: 110px; height: 110px; border-radius: 50%; object-fit: cover; border: 4px solid var(--primary); margin-bottom: 15px; }
         .stats-box { display: flex; justify-content: center; gap: 30px; margin: 20px 0; border-top: 1px solid #222; padding-top: 20px; }
-        .stat-item { text-align: center; }
         .stat-num { display: block; font-size: 1.2rem; font-weight: bold; color: var(--text); }
         .stat-label { font-size: 0.8rem; color: #555; text-transform: uppercase; }
 
@@ -69,10 +70,10 @@
 </head>
 <body>
 
-    <div id="auth-screen" class="auth-container" style="height: 100vh; display: flex; justify-content: center; align-items: center;">
+    <div id="auth-screen" style="height: 100vh; display: flex; justify-content: center; align-items: center;">
         <div class="auth-box">
             <img src="IMG-20260302-WA0005.jpg" class="logo-img">
-            <h1 style="letter-spacing: 1px;">CRONOS 7</h1>
+            <h1>CRONOS 7</h1>
             <input type="text" id="reg-name" placeholder="Choose Username">
             <input type="email" id="email" placeholder="Email Address">
             <input type="password" id="pass" placeholder="Secure Password">
@@ -114,17 +115,16 @@
             <div id="tab-profile" class="hidden">
                 <div class="profile-header">
                     <img id="prof-pic-display" src="https://via.placeholder.com/110" class="profile-pic-large">
-                    <h2 id="prof-user" style="margin:0">@username</h2>
+                    <h2 id="prof-user">@username</h2>
                     <span id="prof-role" class="badge">PROFESSION</span>
                     <div class="stats-box">
                         <div class="stat-item"><span class="stat-num" id="count-following">0</span><span class="stat-label">Following</span></div>
                         <div class="stat-item"><span class="stat-num" id="count-followers">0</span><span class="stat-label">Followers</span></div>
                     </div>
-                    <p id="prof-bio" style="color:#888; max-width:400px; margin: 0 auto;">No bio provided.</p>
                 </div>
                 <h3>Settings</h3>
                 <input type="text" id="edit-pic" placeholder="Profile Picture URL">
-                <input type="text" id="edit-role" placeholder="Your Title (ex: Theoretical Physicist)">
+                <input type="text" id="edit-role" placeholder="Your Title">
                 <textarea id="edit-bio" placeholder="Professional Bio..."></textarea>
                 <button class="btn-main" onclick="updateProfile()">SAVE STATION DATA</button>
             </div>
@@ -154,14 +154,22 @@
             const name = document.getElementById('reg-name').value.trim();
             try {
                 await auth.signInWithEmailAndPassword(email, pass).catch(async (err) => {
-                    if(!name) throw new Error("Username required for registration.");
+                    if(!name) throw new Error("Username required.");
                     const newUser = await auth.createUserWithEmailAndPassword(email, pass);
                     await db.collection("users").doc(newUser.user.uid).set({ 
-                        username: name, bio: "Professional Member", role: "Specialist", 
+                        username: name, bio: "Member", role: "Specialist", 
                         pic: "https://via.placeholder.com/110", joined: new Date().toISOString() 
                     });
                 });
             } catch (e) { document.getElementById('auth-error').innerText = e.message; }
+        }
+
+        async function deletePost(postId) {
+            if(confirm("Confirm deletion of this transmission?")) {
+                try {
+                    await db.collection("posts").doc(postId).delete();
+                } catch (e) { alert("Error: " + e.message); }
+            }
         }
 
         async function updateProfile() {
@@ -169,9 +177,7 @@
             const bio = document.getElementById('edit-bio').value;
             const role = document.getElementById('edit-role').value;
             await db.collection("users").doc(auth.currentUser.uid).update({ 
-                pic: pic || userProfile.pic, 
-                bio: bio || userProfile.bio, 
-                role: role || userProfile.role 
+                pic: pic || userProfile.pic, bio: bio || userProfile.bio, role: role || userProfile.role 
             });
             location.reload();
         }
@@ -197,15 +203,12 @@
             const title = document.getElementById('post-title').value;
             const category = document.getElementById('post-category').value;
             const body = document.getElementById('post-content').value;
-            if(!title || !body) return alert("Fields cannot be empty.");
-
+            if(!title || !body) return;
             await db.collection("posts").add({
                 title, body, category, author: userProfile.username,
                 authorId: auth.currentUser.uid, authorRole: userProfile.role,
-                authorPic: userProfile.pic, likes: 0, timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                authorPic: userProfile.pic, timestamp: firebase.firestore.FieldValue.serverTimestamp()
             });
-            document.getElementById('post-title').value = "";
-            document.getElementById('post-content').value = "";
             showTab('feed');
         }
 
@@ -214,25 +217,24 @@
             container.innerHTML = "";
             docs.forEach(doc => {
                 const post = doc.data();
+                const id = doc.id;
                 const isMe = post.authorId === auth.currentUser.uid;
                 const isFollowing = followingList.includes(post.authorId);
                 
                 container.innerHTML += `
                     <div class="card">
+                        ${isMe ? `<button class="delete-btn" onclick="deletePost('${id}')">Delete Transmission</button>` : ''}
                         <div class="author-row">
                             <img src="${post.authorPic}" class="user-avatar">
                             <div class="author-meta">
                                 <span class="author-name">@${post.author}</span>
                                 <span class="author-role">${post.authorRole}</span>
                             </div>
-                            ${!isMe ? `
-                                <button class="follow-btn ${isFollowing ? 'following' : ''}" onclick="toggleFollow('${post.authorId}')">
-                                    ${isFollowing ? 'Following' : 'Follow'}
-                                </button>` : ''}
+                            ${!isMe ? `<button class="follow-btn ${isFollowing ? 'following' : ''}" onclick="toggleFollow('${post.authorId}')">${isFollowing ? 'Following' : 'Follow'}</button>` : ''}
                         </div>
                         <span class="badge badge-${post.category}">${post.category}</span>
-                        <div style="font-size: 1.2rem; font-weight: bold; margin-bottom: 10px; color: var(--primary);">${post.title}</div>
-                        <p style="white-space: pre-wrap; color:#ddd; line-height:1.6; margin:0;">${post.body}</p>
+                        <div style="font-weight: bold; margin-bottom: 8px; color: var(--primary);">${post.title}</div>
+                        <p style="white-space: pre-wrap; color:#ddd; margin:0;">${post.body}</p>
                     </div>`;
             });
         }
@@ -253,15 +255,10 @@
                 document.getElementById('auth-screen').classList.add('hidden');
                 document.getElementById('app-screen').classList.remove('hidden');
                 document.getElementById('prof-user').innerText = "@" + userProfile.username;
-                document.getElementById('prof-bio').innerText = userProfile.bio;
                 document.getElementById('prof-role').innerText = userProfile.role;
                 document.getElementById('prof-pic-display').src = userProfile.pic;
-                
                 await loadStats();
-                db.collection("posts").orderBy("timestamp", "desc").onSnapshot(snap => {
-                    allPosts = snap.docs;
-                    filterFeed();
-                });
+                db.collection("posts").orderBy("timestamp", "desc").onSnapshot(snap => { allPosts = snap.docs; filterFeed(); });
             }
         });
 
