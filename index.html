@@ -3,116 +3,155 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cronos 7 | Professional Social Network</title>
-    <link rel="icon" type="image/jpeg" href="IMG-20260302-WA0005.jpg">
+    <title>Cronos 7 | Global Professional Network</title>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
 
     <style>
         :root { 
-            --primary: #00a2ff; --bg: #050505; --panel: #111; --text: #fff; --border: #222; 
-            --dev: #ff4757; --art: #ffa502; --science: #2ed573; --phil: #a29bfe; --danger: #ff4444;
+            --primary: #00a2ff; --bg: #0a0a0a; --panel: #161616; --text: #e0e0e0; 
+            --border: #2d2d2d; --hover: #252525;
         }
-        body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; margin: 0; overflow-x: hidden; }
+
+        body { 
+            background: var(--bg); color: var(--text); 
+            font-family: 'Inter', sans-serif; margin: 0; 
+        }
+
         .hidden { display: none !important; }
-        
-        .sidebar { background: var(--panel); border-right: 1px solid var(--border); padding: 25px; display: flex; flex-direction: column; width: 260px; position: fixed; height: 100vh; z-index: 100; }
-        .logo-img { width: 80px; mix-blend-mode: lighten; margin-bottom: 20px; align-self: center; }
-        .nav-link { padding: 12px; margin: 5px 0; border-radius: 8px; cursor: pointer; color: #aaa; transition: 0.2s; font-weight: 500; }
-        .nav-link:hover { background: #1a1a1a; color: #fff; }
+
+        .sidebar { 
+            background: var(--panel); border-right: 1px solid var(--border); 
+            padding: 20px; display: flex; flex-direction: column; 
+            width: 240px; position: fixed; height: 100vh; z-index: 100; 
+        }
+
+        .nav-link { 
+            padding: 12px 15px; margin: 4px 0; border-radius: 10px; 
+            cursor: pointer; color: #999; transition: all 0.3s ease;
+            display: flex; align-items: center; gap: 10px;
+        }
+
+        .nav-link:hover { background: var(--hover); color: #fff; }
         .nav-link.active { background: var(--primary); color: #fff; }
 
-        .content { margin-left: 260px; padding: 40px; background: #080808; min-height: 100vh; }
-        .search-container { width: 100%; max-width: 600px; margin-bottom: 30px; }
-        .search-container input { width: 100%; padding: 15px; background: #111; border: 1px solid #333; color: white; border-radius: 30px; outline: none; }
+        .content { margin-left: 240px; padding: 30px; max-width: 700px; margin-right: auto; }
 
-        .card { background: var(--panel); border: 1px solid var(--border); padding: 20px; border-radius: 12px; margin-bottom: 20px; position: relative; }
-        .author-row { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
-        .user-avatar { width: 45px; height: 45px; border-radius: 50%; background: #222; object-fit: cover; }
-        .author-name { font-weight: bold; font-size: 1rem; color: var(--text); }
-        .author-role { color: #666; font-size: 0.8rem; display: block; }
-        
-        .actions-bar { display: flex; gap: 20px; margin-top: 15px; border-top: 1px solid #222; padding-top: 10px; }
-        .action-item { cursor: pointer; font-size: 0.85rem; color: #888; display: flex; align-items: center; gap: 5px; }
-        .action-item:hover { color: var(--primary); }
-        .liked { color: var(--primary); font-weight: bold; }
+        .search-wrapper { position: relative; margin-bottom: 25px; }
+        .search-results { 
+            position: absolute; background: #1a1a1a; width: 100%; 
+            border-radius: 8px; z-index: 200; border: 1px solid var(--border); 
+            top: 55px; box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+        }
+        .user-item { 
+            padding: 12px; display: flex; align-items: center; gap: 10px; 
+            cursor: pointer; border-bottom: 1px solid #222; 
+        }
 
-        .comment-section { margin-top: 10px; background: #0c0c0c; border-radius: 8px; padding: 10px; font-size: 0.9rem; }
-        .comment { border-bottom: 1px solid #1a1a1a; padding: 5px 0; }
-        .comment b { color: var(--primary); }
+        .card { 
+            background: var(--panel); border: 1px solid var(--border); 
+            border-radius: 12px; margin-bottom: 25px; overflow: hidden;
+        }
 
-        .profile-header { text-align: center; padding: 30px; border-bottom: 1px solid var(--border); }
-        .profile-pic-lg { width: 100px; height: 100px; border-radius: 50%; border: 3px solid var(--primary); object-fit: cover; }
+        .card-header { padding: 15px; display: flex; align-items: center; gap: 12px; }
+        .user-avatar { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; background: #333; }
+        .author-name { font-weight: 700; color: #fff; }
+        .author-role { font-size: 0.75rem; color: #888; }
 
-        .btn-main { padding: 10px 20px; background: var(--primary); color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; }
-        .btn-special { background: #ff4757; margin-top: 10px; display: block; width: 100%; text-decoration: none; text-align: center; box-sizing: border-box; }
-        input, textarea, select { width: 100%; padding: 12px; margin: 8px 0; background: #000; border: 1px solid #333; color: #fff; border-radius: 8px; box-sizing: border-box; }
-        
-        .follow-btn { padding: 5px 15px; border-radius: 20px; border: 1px solid var(--primary); background: transparent; color: var(--primary); cursor: pointer; font-size: 0.8rem; font-weight: bold; }
-        .follow-btn.active { background: var(--primary); color: white; }
+        .badge-rec { background: #2ed573; color: #000; font-size: 0.65rem; padding: 2px 6px; border-radius: 4px; margin-left: 8px; font-weight: bold; }
+
+        .card-body { padding: 0 15px 15px 15px; }
+        .post-title { font-size: 1.1rem; font-weight: 600; color: var(--primary); margin-bottom: 8px; }
+        .post-img { width: 100%; max-height: 350px; object-fit: cover; margin-top: 10px; border-radius: 8px; }
+
+        .actions-bar { display: flex; border-top: 1px solid var(--border); padding: 10px; justify-content: space-around; }
+        .action-item { background: none; border: none; color: #aaa; cursor: pointer; font-weight: 600; }
+        .liked { color: var(--primary); }
+
+        .chat-box { height: 450px; display: flex; flex-direction: column; background: var(--panel); border-radius: 12px; border: 1px solid var(--border); }
+        .messages-area { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 10px; }
+        .msg-bubble { padding: 10px 15px; border-radius: 15px; max-width: 70% }
+        .msg-me { align-self: flex-end; background: var(--primary); color: white; }
+        .msg-them { align-self: flex-start; background: #333; color: white; }
+
+        input, textarea { 
+            width: 100%; padding: 12px; margin: 10px 0; 
+            background: #111; border: 1px solid var(--border); 
+            color: #fff; border-radius: 8px; box-sizing: border-box;
+        }
+
+        .btn-main { 
+            background: var(--primary); color: white; border: none; 
+            padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%;
+        }
     </style>
 </head>
 <body>
 
     <div id="auth-screen" style="height: 100vh; display: flex; justify-content: center; align-items: center;">
-        <div style="background: var(--panel); padding: 40px; border-radius: 15px; width: 320px; text-align: center; border: 1px solid var(--border);">
-            <img src="IMG-20260302-WA0005.jpg" class="logo-img">
-            <h2 id="auth-title">LOGIN</h2>
+        <div style="background: var(--panel); padding: 40px; border-radius: 20px; width: 340px; border: 1px solid var(--border);">
+            <h2 id="auth-title" style="text-align:center">CRONOS 7</h2>
             <div id="reg-fields" class="hidden">
-                <input type="text" id="reg-user" placeholder="Username (@)">
+                <input type="text" id="reg-user" placeholder="Choose @username">
             </div>
-            <input type="email" id="auth-email" placeholder="Email">
+            <input type="email" id="auth-email" placeholder="Email Address">
             <input type="password" id="auth-pass" placeholder="Password">
-            <button class="btn-main" style="width:100%" onclick="handleAuth()">CONTINUE</button>
-            <p onclick="toggleAuth()" style="color: var(--primary); cursor: pointer; font-size: 0.8rem; margin-top: 15px;">Switch Login/Register</p>
+            <button class="btn-main" onclick="handleAuth()">CONTINUE</button>
+            <p onclick="toggleAuth()" style="color: var(--primary); cursor: pointer; text-align: center; font-size: 0.8rem; margin-top: 20px;">Toggle Login/Register</p>
         </div>
     </div>
 
     <div id="app-screen" class="hidden">
         <div class="sidebar">
-            <img src="IMG-20260302-WA0005.jpg" class="logo-img">
-            <div class="nav-link active" id="link-feed" onclick="showTab('feed')">FEED</div>
-            <div class="nav-link" id="link-create" onclick="showTab('create')">BROADCAST</div>
-            <div class="nav-link" id="link-profile" onclick="showTab('profile')">STATION</div>
-            <button class="btn-main" onclick="logout()" style="margin-top:auto; background:#222">LOGOUT</button>
+            <h2 style="color: var(--primary); margin-bottom: 30px; letter-spacing: 2px;">CRONOS</h2>
+            <div class="nav-link active" id="link-feed" onclick="showTab('feed')">Home</div>
+            <div class="nav-link" id="link-messages" onclick="showTab('messages')">Messages</div>
+            <div class="nav-link" id="link-create" onclick="showTab('create')">Post</div>
+            <div class="nav-link" id="link-profile" onclick="showTab('profile')">Profile</div>
+            <button class="btn-main" onclick="logout()" style="margin-top:auto; background:#222">Sign Out</button>
         </div>
 
         <div class="content">
             <div id="tab-feed">
-                <div class="search-container">
-                    <input type="text" id="search-input" placeholder="Search professionals or topics..." onkeyup="filterFeed()">
+                <div class="search-wrapper">
+                    <input type="text" id="search-input" placeholder="Search users by @username..." onkeyup="handleSearch(this.value)">
+                    <div id="search-results" class="search-results hidden"></div>
                 </div>
-                <div id="posts-container">Establishing uplink...</div>
+                <div id="posts-container">Synchronizing uplink...</div>
+            </div>
+
+            <div id="tab-messages" class="hidden">
+                <h2 id="chat-with-label">Select a user to chat</h2>
+                <div id="chat-container" class="chat-box hidden">
+                    <div id="chat-messages" class="messages-area"></div>
+                    <div style="padding: 15px; border-top: 1px solid var(--border); display: flex; gap: 10px;">
+                        <input type="text" id="msg-input" placeholder="Write a message...">
+                        <button class="btn-main" style="width: 100px" onclick="sendPrivateMsg()">Send</button>
+                    </div>
+                </div>
             </div>
 
             <div id="tab-create" class="hidden">
-                <h2>New Professional Transmission</h2>
-                <input type="text" id="post-title" placeholder="Project / Theory Title">
-                <select id="post-category" onchange="checkCategory(this.value)">
-                    <option value="science">Physics / Mathematics</option>
-                    <option value="dev">Software Engineering</option>
-                    <option value="art">Arts / Acting</option>
-                    <option value="phil">Philosophy</option>
-                </select>
-                
-                <a href="https://miguelsaldanha1213-byte.github.io/ChronoMaisend/" id="btn-site-link" class="btn-main btn-special hidden" target="_blank">IR PARA CHRONOMAISEND</a>
-
-                <textarea id="post-content" rows="6" placeholder="What are you working on?"></textarea>
-                <button class="btn-main" onclick="publishPost()">BROADCAST</button>
+                <div class="card" style="padding: 25px;">
+                    <h2>Create Transmission</h2>
+                    <input type="text" id="post-title" placeholder="Project or Theory Headline">
+                    <input type="text" id="post-image-url" placeholder="Image URL (Optional)">
+                    <textarea id="post-content" rows="6" placeholder="What are you working on?"></textarea>
+                    <button class="btn-main" onclick="publishPost()">BROADCAST</button>
+                </div>
             </div>
 
             <div id="tab-profile" class="hidden">
-                <div class="profile-header">
-                    <img id="p-img" src="" class="profile-pic-lg">
-                    <h2 id="p-user"></h2>
-                    <p id="p-role" style="color: var(--primary);"></p>
+                <div class="card" style="padding: 30px; text-align: center;">
+                    <img id="p-img" src="" class="user-avatar" style="width:110px; height:110px; margin-bottom:15px; border: 2px solid var(--primary)">
+                    <h2 id="p-user" style="margin:0"></h2>
+                    <p id="p-role" style="color: var(--primary)"></p>
+                    <hr border="0" style="border-top: 1px solid var(--border); margin: 25px 0;">
+                    <input type="text" id="edit-pic" placeholder="Profile Picture URL">
+                    <input type="text" id="edit-role" placeholder="Professional Role">
+                    <button class="btn-main" onclick="updateProfile()">UPDATE STATION</button>
                 </div>
-                <h3>Station Settings</h3>
-                <input type="text" id="edit-pic" placeholder="Profile Picture URL">
-                <input type="text" id="edit-role" placeholder="Role (e.g., Theoretical Physicist)">
-                <textarea id="edit-bio" placeholder="Professional Bio..."></textarea>
-                <button class="btn-main" onclick="updateProfile()">SAVE SETTINGS</button>
             </div>
         </div>
     </div>
@@ -130,19 +169,10 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
         const auth = firebase.auth();
+        
         let userProfile = null;
         let isReg = false;
-        let allPosts = [];
-        let myFollows = [];
-
-        function checkCategory(val) {
-            const btn = document.getElementById('btn-site-link');
-            if(val === 'dev') {
-                btn.classList.remove('hidden');
-            } else {
-                btn.classList.add('hidden');
-            }
-        }
+        let activeChatId = null;
 
         function toggleAuth() {
             isReg = !isReg;
@@ -153,105 +183,143 @@
         async function handleAuth() {
             const email = document.getElementById('auth-email').value;
             const pass = document.getElementById('auth-pass').value;
-            if (isReg) {
-                const user = document.getElementById('reg-user').value.toLowerCase();
-                const snap = await db.collection("users").where("username", "==", user).get();
-                if(!snap.empty) return alert("Username already taken!");
-                const res = await auth.createUserWithEmailAndPassword(email, pass);
-                await db.collection("users").doc(res.user.uid).set({
-                    username: user, role: "Specialist", pic: "https://via.placeholder.com/100", bio: ""
+            try {
+                if (isReg) {
+                    const user = document.getElementById('reg-user').value.toLowerCase().trim();
+                    const res = await auth.createUserWithEmailAndPassword(email, pass);
+                    await db.collection("users").doc(res.user.uid).set({
+                        username: user, role: "Researcher", pic: "https://ui-avatars.com/api/?name="+user, bio: ""
+                    });
+                } else {
+                    await auth.signInWithEmailAndPassword(email, pass);
+                }
+            } catch (e) { alert(e.message); }
+        }
+
+        async function handleSearch(val) {
+            const resultsDiv = document.getElementById('search-results');
+            if (val.length < 2) { resultsDiv.classList.add('hidden'); return; }
+
+            const snap = await db.collection("users")
+                .where("username", ">=", val.toLowerCase())
+                .where("username", "<=", val.toLowerCase() + "\uf8ff")
+                .limit(5).get();
+
+            resultsDiv.innerHTML = "";
+            if (!snap.empty) {
+                resultsDiv.classList.remove('hidden');
+                snap.forEach(doc => {
+                    const u = doc.data();
+                    resultsDiv.innerHTML += `
+                        <div class="user-item" onclick="openChat('${doc.id}', '${u.username}')">
+                            <img src="${u.pic}" style="width:30px; height:30px; border-radius:50%">
+                            <span>@${u.username}</span>
+                        </div>`;
                 });
-            } else {
-                await auth.signInWithEmailAndPassword(email, pass).catch(e => alert("Login Error"));
             }
+        }
+
+        function listenToFeed() {
+            db.collection("posts").orderBy("timestamp", "desc").onSnapshot(snap => {
+                const container = document.getElementById('posts-container');
+                container.innerHTML = "";
+                snap.forEach(doc => {
+                    const p = doc.data();
+                    const isLiked = p.likes.includes(auth.currentUser.uid);
+                    const isRec = p.likes.length >= 2;
+                    
+                    container.innerHTML += `
+                        <div class="card">
+                            <div class="card-header">
+                                <img src="${p.authorPic}" class="user-avatar">
+                                <div class="author-info">
+                                    <span class="author-name">@${p.author}</span>${isRec ? '<span class="badge-rec">RECOMMENDED</span>' : ''}
+                                    <div class="author-role">${p.authorRole}</div>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="post-title">${p.title}</div>
+                                <p style="white-space:pre-wrap;">${p.body}</p>
+                                ${p.image ? `<img src="${p.image}" class="post-img">` : ''}
+                            </div>
+                            <div class="actions-bar">
+                                <button class="action-item ${isLiked?'liked':''}" onclick="toggleLike('${doc.id}', ${JSON.stringify(p.likes)})">
+                                    ▲ ${p.likes.length} Recommend
+                                </button>
+                            </div>
+                        </div>`;
+                });
+            });
+        }
+
+        async function toggleLike(id, currentLikes) {
+            const uid = auth.currentUser.uid;
+            const newLikes = currentLikes.includes(uid) ? currentLikes.filter(l => l !== uid) : [...currentLikes, uid];
+            await db.collection("posts").doc(id).update({ likes: newLikes });
+        }
+
+        async function openChat(targetUid, targetName) {
+            document.getElementById('search-results').classList.add('hidden');
+            document.getElementById('chat-with-label').innerText = "Chatting with @" + targetName;
+            document.getElementById('chat-container').classList.remove('hidden');
+            showTab('messages');
+            activeChatId = targetUid;
+            
+            const chatId = [auth.currentUser.uid, targetUid].sort().join("_");
+            db.collection("messages")
+                .where("chatId", "==", chatId)
+                .orderBy("timestamp", "asc")
+                .onSnapshot(snap => {
+                    const box = document.getElementById('chat-messages');
+                    box.innerHTML = "";
+                    snap.forEach(doc => {
+                        const m = doc.data();
+                        const isMe = m.senderId === auth.currentUser.uid;
+                        box.innerHTML += `<div class="msg-bubble ${isMe?'msg-me':'msg-them'}">${m.text}</div>`;
+                    });
+                    box.scrollTop = box.scrollHeight;
+                });
+        }
+
+        async function sendPrivateMsg() {
+            const text = document.getElementById('msg-input').value;
+            if (!text || !activeChatId) return;
+            const chatId = [auth.currentUser.uid, activeChatId].sort().join("_");
+            await db.collection("messages").add({
+                chatId, senderId: auth.currentUser.uid, participants: [auth.currentUser.uid, activeChatId],
+                text, timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            document.getElementById('msg-input').value = "";
         }
 
         async function publishPost() {
             const title = document.getElementById('post-title').value;
             const content = document.getElementById('post-content').value;
-            const cat = document.getElementById('post-category').value;
+            const img = document.getElementById('post-image-url').value;
             if(!title || !content) return;
             await db.collection("posts").add({
-                title, body: content, category: cat, author: userProfile.username,
-                authorId: auth.currentUser.uid, authorPic: userProfile.pic,
-                authorRole: userProfile.role, likes: [], timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                title, body: content, image: img || null,
+                author: userProfile.username, authorId: auth.currentUser.uid,
+                authorPic: userProfile.pic, authorRole: userProfile.role,
+                likes: [], timestamp: firebase.firestore.FieldValue.serverTimestamp()
             });
             showTab('feed');
-        }
-
-        async function toggleLike(postId, likesArray) {
-            const uid = auth.currentUser.uid;
-            const newLikes = likesArray.includes(uid) ? likesArray.filter(id => id !== uid) : [...likesArray, uid];
-            await db.collection("posts").doc(postId).update({ likes: newLikes });
-        }
-
-        async function addComment(postId) {
-            const text = prompt("Type your comment:");
-            if(!text) return;
-            await db.collection("posts").doc(postId).collection("comments").add({
-                user: userProfile.username, text, timestamp: new Date()
-            });
-        }
-
-        async function toggleFollow(targetId) {
-            const myId = auth.currentUser.uid;
-            const ref = db.collection("follows").doc(`${myId}_${targetId}`);
-            const doc = await ref.get();
-            if(doc.exists) await ref.delete();
-            else await ref.set({ follower: myId, following: targetId });
         }
 
         async function updateProfile() {
             const pic = document.getElementById('edit-pic').value;
             const role = document.getElementById('edit-role').value;
-            const bio = document.getElementById('edit-bio').value;
             await db.collection("users").doc(auth.currentUser.uid).update({ 
-                pic: pic || userProfile.pic, role: role || userProfile.role, bio: bio || userProfile.bio 
+                pic: pic || userProfile.pic, role: role || userProfile.role 
             });
             location.reload();
         }
 
-        function filterFeed() {
-            const q = document.getElementById('search-input').value.toLowerCase();
-            const filtered = allPosts.filter(d => {
-                const p = d.data();
-                return p.author.toLowerCase().includes(q) || p.title.toLowerCase().includes(q) || p.authorRole.toLowerCase().includes(q);
+        function showTab(t) {
+            ['feed', 'messages', 'create', 'profile'].forEach(id => {
+                document.getElementById('tab-'+id).classList.toggle('hidden', id !== t);
+                document.getElementById('link-'+id).classList.toggle('active', id === t);
             });
-            renderPosts(filtered);
-        }
-
-        async function renderPosts(docs) {
-            const container = document.getElementById('posts-container');
-            container.innerHTML = "";
-            for (const doc of docs) {
-                const p = doc.data();
-                const isLiked = p.likes.includes(auth.currentUser.uid);
-                const isFollowing = myFollows.includes(p.authorId);
-                const isMe = p.authorId === auth.currentUser.uid;
-
-                let commentHtml = "";
-                const cSnap = await db.collection("posts").doc(doc.id).collection("comments").orderBy("timestamp", "asc").limit(3).get();
-                cSnap.forEach(c => { commentHtml += `<div class="comment"><b>@${c.data().user}</b>: ${c.data().text}</div>`; });
-
-                container.innerHTML += `
-                    <div class="card">
-                        <div class="author-row">
-                            <img src="${p.authorPic}" class="user-avatar">
-                            <div style="flex:1">
-                                <span class="author-name">@${p.author}</span>
-                                <span class="author-role">${p.authorRole}</span>
-                            </div>
-                            ${!isMe ? `<button class="follow-btn ${isFollowing?'active':''}" onclick="toggleFollow('${p.authorId}')">${isFollowing?'Following':'Follow'}</button>` : ''}
-                        </div>
-                        <div style="color:var(--primary); font-weight:bold; margin-bottom:5px;">${p.title}</div>
-                        <p style="white-space:pre-wrap; margin:0; color:#ddd;">${p.body}</p>
-                        <div class="actions-bar">
-                            <div class="action-item ${isLiked?'liked':''}" onclick="toggleLike('${doc.id}', ${JSON.stringify(p.likes)})">▲ ${p.likes.length} Upvotes</div>
-                            <div class="action-item" onclick="addComment('${doc.id}')">💬 Comment</div>
-                        </div>
-                        <div class="comment-section">${commentHtml || 'No comments yet...'}</div>
-                    </div>`;
-            }
         }
 
         auth.onAuthStateChanged(async user => {
@@ -263,27 +331,13 @@
                 document.getElementById('p-user').innerText = "@" + userProfile.username;
                 document.getElementById('p-role').innerText = userProfile.role;
                 document.getElementById('p-img').src = userProfile.pic;
-
-                db.collection("follows").where("follower", "==", user.uid).onSnapshot(s => {
-                    myFollows = s.docs.map(d => d.data().following);
-                });
-
-                db.collection("posts").orderBy("timestamp", "desc").onSnapshot(snap => {
-                    allPosts = snap.docs;
-                    filterFeed();
-                });
+                listenToFeed();
             } else {
                 document.getElementById('auth-screen').classList.remove('hidden');
                 document.getElementById('app-screen').classList.add('hidden');
             }
         });
 
-        function showTab(t) {
-            ['feed', 'create', 'profile'].forEach(id => {
-                document.getElementById('tab-'+id).classList.toggle('hidden', id !== t);
-                document.getElementById('link-'+id).classList.toggle('active', id === t);
-            });
-        }
         function logout() { auth.signOut(); }
     </script>
 </body>
