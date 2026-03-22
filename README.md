@@ -1,2 +1,2 @@
-# Cronos7-new-version-
-This is Cronos7 (another version)
+# Cronos7
+This is Cronos7, our first site
