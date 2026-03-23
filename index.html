@@ -43,6 +43,7 @@
         .search-input { 
             width: 100%; background: var(--panel); border: 1px solid var(--border); 
             padding: 14px 20px; border-radius: 14px; color: white; outline: none; transition: 0.3s;
+            box-sizing: border-box;
         }
         .search-input:focus { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(0, 162, 255, 0.1); }
 
@@ -57,46 +58,46 @@
         .author-role { font-size: 0.75rem; color: #666; font-weight: 600; text-transform: uppercase; }
 
         .post-title { font-size: 1.25rem; font-weight: 700; margin-bottom: 10px; color: var(--primary); }
-        .post-body { line-height: 1.6; color: #ccc; margin-bottom: 15px; }
-        .post-img { width: 100%; border-radius: 14px; border: 1px solid var(--border); }
+        .post-body { line-height: 1.6; color: #ccc; margin-bottom: 15px; white-space: pre-wrap; }
+        .post-img { width: 100%; border-radius: 14px; border: 1px solid var(--border); margin-top: 10px; }
 
         .btn-action { 
             background: #1a1a1a; border: 1px solid var(--border); color: #888; 
-            padding: 8px 16px; border-radius: 10px; cursor: pointer; font-weight: 600; font-size: 0.85rem;
+            padding: 10px 20px; border-radius: 10px; cursor: pointer; font-weight: 600; font-size: 0.85rem;
             transition: 0.2s;
         }
         .btn-action:hover { border-color: var(--primary); color: #fff; }
         .liked { background: rgba(0, 162, 255, 0.1); border-color: var(--primary); color: var(--primary); }
 
         .profile-hero { text-align: center; padding: 20px 0; }
-        .profile-large-avatar { width: 100px; height: 100px; border-radius: 24px; margin-bottom: 16px; border: 2px solid var(--primary); }
+        .profile-large-avatar { width: 110px; height: 110px; border-radius: 28px; margin-bottom: 16px; border: 2px solid var(--primary); object-fit: cover; }
 
         .btn-primary { 
-            background: var(--primary); color: white; border: none; padding: 12px 24px; 
+            background: var(--primary); color: white; border: none; padding: 14px; 
             border-radius: 12px; font-weight: 700; cursor: pointer; width: 100%; transition: 0.3s;
         }
         .btn-primary:hover { opacity: 0.9; transform: translateY(-2px); }
 
         @media (max-width: 768px) {
-            .sidebar { width: 80px; padding: 20px 10px; }
+            .sidebar { width: 70px; padding: 20px 10px; }
             .nav-link span { display: none; }
-            .main-content { margin-left: 80px; padding: 20px; }
-            .logo { font-size: 1.2rem; text-align: center; }
+            .main-content { margin-left: 70px; padding: 20px; }
+            .logo { font-size: 1rem; text-align: center; }
         }
     </style>
 </head>
 <body>
 
     <div id="auth-screen" style="height:100vh; display:flex; align-items:center; justify-content:center;">
-        <div class="card" style="width:350px;">
-            <h2 id="auth-title" style="text-align:center; margin-bottom:30px;">CRONOS 7</h2>
+        <div class="card" style="width:360px;">
+            <h2 id="auth-title" style="text-align:center; margin-bottom:30px; letter-spacing: 2px;">CRONOS 7</h2>
             <div id="reg-fields" class="hidden">
-                <input type="text" id="reg-user" class="search-input" style="margin-bottom:10px" placeholder="@username">
+                <input type="text" id="reg-user" class="search-input" style="margin-bottom:12px" placeholder="Username (ex: miguel)">
             </div>
-            <input type="email" id="auth-email" class="search-input" style="margin-bottom:10px" placeholder="Email">
-            <input type="password" id="auth-pass" class="search-input" style="margin-bottom:20px" placeholder="Password">
+            <input type="email" id="auth-email" class="search-input" style="margin-bottom:12px" placeholder="Email">
+            <input type="password" id="auth-pass" class="search-input" style="margin-bottom:24px" placeholder="Password">
             <button class="btn-primary" onclick="handleAuth()">Continue</button>
-            <p onclick="toggleAuth()" style="text-align:center; color:var(--primary); font-size:0.8rem; margin-top:20px; cursor:pointer">Switch Login/Register</p>
+            <p onclick="toggleAuth()" style="text-align:center; color:var(--primary); font-size:0.85rem; margin-top:24px; cursor:pointer">Switch Login/Register</p>
         </div>
     </div>
 
@@ -112,36 +113,36 @@
         <div class="main-content">
             <div id="tab-feed">
                 <div class="search-container">
-                    <input type="text" class="search-input" placeholder="Search @researcher..." onkeydown="if(event.key==='Enter') searchUser(this.value)">
+                    <input type="text" id="search-bar" class="search-input" placeholder="Search @researcher..." onkeydown="if(event.key==='Enter') searchUser(this.value)">
                 </div>
-                <div id="feed-container"></div>
+                <div id="feed-container">Syncing transmissions...</div>
             </div>
 
             <div id="tab-profile" class="hidden">
                 <div class="card profile-hero">
                     <img id="p-img" src="" class="profile-large-avatar">
                     <h2 id="p-name" style="margin:0"></h2>
-                    <p id="p-role" style="color:var(--primary); font-weight:700;"></p>
-                    <div style="display:flex; gap:10px; margin-top:20px;">
+                    <p id="p-role" style="color:var(--primary); font-weight:700; margin-top:5px;"></p>
+                    <div id="profile-edit-controls" class="hidden">
                         <input type="file" id="up-img" class="hidden" onchange="processImage(this, 'p-data-img')">
-                        <label for="up-img" class="btn-action" style="flex:1">Change Photo</label>
+                        <label for="up-img" class="btn-action" style="display:inline-block; margin-top:15px">Change Photo</label>
                         <input type="hidden" id="p-data-img">
+                        <input type="text" id="p-new-role" class="search-input" style="margin-top:15px" placeholder="New Role">
+                        <button class="btn-primary" style="margin-top:15px" onclick="updateProfile()">Save Changes</button>
                     </div>
-                    <input type="text" id="p-new-role" class="search-input" style="margin-top:10px" placeholder="Update Role">
-                    <button class="btn-primary" style="margin-top:15px" onclick="updateProfile()">Save Station</button>
                 </div>
-                <div id="my-posts"></div>
+                <div id="profile-posts"></div>
             </div>
 
             <div id="tab-create" class="hidden">
                 <div class="card">
-                    <h3 style="margin-top:0">New Transmission</h3>
-                    <input type="text" id="post-t" class="search-input" style="margin-bottom:10px" placeholder="Title">
-                    <label for="post-up" class="btn-action" style="display:block; text-align:center; margin-bottom:10px">📎 Add Media</label>
+                    <h3 style="margin-top:0">New Broadcast</h3>
+                    <input type="text" id="post-t" class="search-input" style="margin-bottom:12px" placeholder="Project Title">
+                    <label for="post-up" class="btn-action" style="display:block; text-align:center; margin-bottom:12px">📎 Select Image</label>
                     <input type="file" id="post-up" class="hidden" onchange="processImage(this, 'post-data-img')">
                     <input type="hidden" id="post-data-img">
-                    <textarea id="post-c" class="search-input" rows="5" placeholder="Theory or project details..."></textarea>
-                    <button class="btn-primary" style="margin-top:10px" onclick="publishPost()">Send Broadcast</button>
+                    <textarea id="post-c" class="search-input" rows="6" placeholder="Describe your findings..."></textarea>
+                    <button class="btn-primary" style="margin-top:15px" onclick="publishPost()">Broadcast Theory</button>
                 </div>
             </div>
         </div>
@@ -198,16 +199,26 @@
         }
 
         async function searchUser(u) {
-            const snap = await db.collection("users").where("username", "==", u.toLowerCase().trim()).get();
+            if(!u) return;
+            const clean = u.toLowerCase().trim().replace('@', '');
+            const snap = await db.collection("users").where("username", "==", clean).get();
             if(!snap.empty) {
                 const data = snap.docs[0].data();
                 const uid = snap.docs[0].id;
-                document.getElementById('p-name').innerText = "@" + data.username;
-                document.getElementById('p-role').innerText = data.role;
-                document.getElementById('p-img').src = data.pic;
-                showTab('profile');
-                loadPosts(uid, 'my-posts');
-            } else { alert("User not found"); }
+                renderProfileView(uid, data);
+            } else { alert("Researcher @" + clean + " not found."); }
+        }
+
+        function renderProfileView(uid, data) {
+            document.getElementById('p-name').innerText = "@" + data.username;
+            document.getElementById('p-role').innerText = data.role;
+            document.getElementById('p-img').src = data.pic;
+            
+            const isMe = (uid === auth.currentUser.uid);
+            document.getElementById('profile-edit-controls').classList.toggle('hidden', !isMe);
+            
+            showTab('profile');
+            loadPosts(uid, 'profile-posts');
         }
 
         function loadPosts(uid, containerId) {
@@ -231,8 +242,8 @@
                             <div class="post-title">${p.title}</div>
                             <div class="post-body">${p.body}</div>
                             ${p.image ? `<img src="${p.image}" class="post-img">` : ''}
-                            <div style="margin-top:15px; display:flex; gap:10px;">
-                                <button class="btn-action ${isLiked?'liked':''}" onclick="like('${doc.id}', ${JSON.stringify(p.likes)})">▲ ${p.likes.length}</button>
+                            <div style="margin-top:20px;">
+                                <button class="btn-action ${isLiked?'liked':''}" onclick="like('${doc.id}', ${JSON.stringify(p.likes)})">▲ ${p.likes.length} Recommend</button>
                             </div>
                         </div>`;
                 });
@@ -256,6 +267,9 @@
                 authorPic: userProfile.pic, authorRole: userProfile.role,
                 likes: [], timestamp: firebase.firestore.FieldValue.serverTimestamp()
             });
+            document.getElementById('post-t').value = "";
+            document.getElementById('post-c').value = "";
+            document.getElementById('post-data-img').value = "";
             showTab('feed');
         }
 
@@ -274,6 +288,7 @@
                 document.getElementById('l-'+id).classList.toggle('active', id === t);
             });
             if(t === 'feed') loadPosts(null, 'feed-container');
+            if(t === 'profile' && !document.getElementById('p-name').innerText) renderProfileView(auth.currentUser.uid, userProfile);
         }
 
         auth.onAuthStateChanged(async user => {
@@ -282,9 +297,6 @@
                 userProfile = d.data();
                 document.getElementById('auth-screen').classList.add('hidden');
                 document.getElementById('app-screen').classList.remove('hidden');
-                document.getElementById('p-name').innerText = "@" + userProfile.username;
-                document.getElementById('p-role').innerText = userProfile.role;
-                document.getElementById('p-img').src = userProfile.pic;
                 showTab('feed');
             } else {
                 document.getElementById('auth-screen').classList.remove('hidden');
@@ -292,7 +304,7 @@
             }
         });
 
-        function logout() { auth.signOut(); }
+        function logout() { auth.signOut(); location.reload(); }
     </script>
 </body>
 </html>
