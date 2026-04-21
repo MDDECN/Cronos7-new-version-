@@ -106,10 +106,6 @@
             .sidebar .logo, .sidebar .logout-box { display: none; }
             .main-content { margin-left: 0; padding: 20px 15px 100px 15px; }
             .nav-link span { display: none; }
-            .nav-link::before { font-size: 1.5rem; }
-            #l-feed::before { content: "⦿"; }
-            #l-create::before { content: "⊕"; }
-            #l-profile::before { content: "👤"; }
         }
     </style>
 </head>
@@ -125,8 +121,8 @@
             </div>
             <input type="email" id="auth-email" class="input-node" placeholder="Access Email">
             <input type="password" id="auth-pass" class="input-node" placeholder="Access Key">
-            <button class="btn-primary" id="btn-auth" onclick="handleAuth()">Initialize Connection</button>
-            <p onclick="toggleAuth()" style="color:var(--text-dim); font-size:0.85rem; text-align:center; margin-top:20px; cursor:pointer">
+            <button class="btn-primary" id="btn-auth">Initialize Connection</button>
+            <p id="toggle-auth-btn" style="color:var(--text-dim); font-size:0.85rem; text-align:center; margin-top:20px; cursor:pointer">
                 Protocol: <span style="color:var(--primary)" id="auth-toggle-text">New Registration</span>
             </p>
         </div>
@@ -135,17 +131,17 @@
     <div id="app-screen" class="hidden">
         <nav class="sidebar">
             <div class="logo">CRONOS<span>7</span></div>
-            <div class="nav-link active" id="l-feed" onclick="showTab('feed')"><span>Stream</span></div>
-            <div class="nav-link" id="l-create" onclick="showTab('create')"><span>Broadcast</span></div>
-            <div class="nav-link" id="l-profile" onclick="showTab('profile')"><span>Station</span></div>
+            <div class="nav-link active" id="l-feed"><span>Stream</span></div>
+            <div class="nav-link" id="l-create"><span>Broadcast</span></div>
+            <div class="nav-link" id="l-profile"><span>Station</span></div>
             <div class="logout-box" style="margin-top:auto; width: 100%;">
-                <button class="btn-primary" style="background:transparent; color:var(--error); border: 1px solid var(--error); font-size: 0.7rem;" onclick="logout()">DISCONNECT</button>
+                <button id="logout-btn" class="btn-primary" style="background:transparent; color:var(--error); border: 1px solid var(--error); font-size: 0.7rem;">DISCONNECT</button>
             </div>
         </nav>
 
         <main class="main-content container">
             <div id="tab-feed">
-                <input type="text" id="search-bar" class="input-node" placeholder="Filter encrypted stream..." oninput="loadPosts(this.value)">
+                <input type="text" id="search-bar" class="input-node" placeholder="Filter encrypted stream...">
                 <div id="feed-container"></div>
             </div>
 
@@ -154,7 +150,7 @@
                     <h3 style="margin:0 0 20px 0; color: var(--primary);">New Transmission</h3>
                     <input type="text" id="post-t" class="input-node" placeholder="Subject">
                     <textarea id="post-c" class="input-node" rows="5" placeholder="Payload content..."></textarea>
-                    <button class="btn-primary" onclick="publishPost()" id="btn-publish">Transmit Data</button>
+                    <button class="btn-primary" id="btn-publish">Transmit Data</button>
                 </div>
             </div>
 
@@ -164,11 +160,27 @@
         </main>
     </div>
 
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc, addDoc, collection, query, orderBy, limit, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyBFtmgcnxahTDzM-LE16i2dpE5ydqXHhv0",
+            authDomain: "youy-f5937.firebaseapp.com",
+            projectId: "youy-f5937",
+            storageBucket: "youy-f5937.firebasestorage.app",
+            messagingSenderId: "952770584090",
+            appId: "1:952770584090:web:2514f4f320f8be64c73ba3"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let userProfile = null;
+        let isReg = false;
+
         const canvas = document.getElementById('particle-canvas');
         const ctx = canvas.getContext('2d');
         let particles = [];
@@ -211,21 +223,6 @@
         }
         animate();
 
-        const firebaseConfig = {
-            apiKey: "YOUR_API_KEY",
-            authDomain: "youy-f5937.firebaseapp.com",
-            projectId: "youy-f5937",
-            storageBucket: "youy-f5937.appspot.com",
-            messagingSenderId: "952770584090",
-            appId: "1:952770584090:web:2514f4f320f8be64c73ba3"
-        };
-
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
-        const auth = firebase.auth();
-        let userProfile = null;
-        let isReg = false;
-
         function toggleAuth() {
             isReg = !isReg;
             document.getElementById('reg-fields').classList.toggle('hidden', !isReg);
@@ -255,17 +252,17 @@
             try {
                 if(isReg) {
                     const user = document.getElementById('reg-user').value.trim() || "Researcher";
-                    const res = await auth.createUserWithEmailAndPassword(email, pass);
+                    const res = await createUserWithEmailAndPassword(auth, email, pass);
                     const profileData = {
                         username: user,
                         role: "Field Specialist", 
                         pic: `https://api.dicebear.com/7.x/identicon/svg?seed=${user}`,
-                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                        createdAt: serverTimestamp()
                     };
-                    await db.collection("users").doc(res.user.uid).set(profileData);
+                    await setDoc(doc(db, "users", res.user.uid), profileData);
                     userProfile = profileData;
                 } else {
-                    await auth.signInWithEmailAndPassword(email, pass);
+                    await signInWithEmailAndPassword(auth, email, pass);
                 }
             } catch (err) { 
                 alert("Auth Error: " + err.message); 
@@ -276,7 +273,9 @@
 
         function loadPosts(filter = "") {
             const container = document.getElementById('feed-container');
-            db.collection("posts").orderBy("timestamp", "desc").limit(20).onSnapshot(snap => {
+            const q = query(collection(db, "posts"), orderBy("timestamp", "desc"), limit(20));
+            
+            onSnapshot(q, (snap) => {
                 container.innerHTML = "";
                 snap.forEach(doc => {
                     const p = doc.data();
@@ -309,12 +308,12 @@
             btn.disabled = true;
             
             try {
-                await db.collection("posts").add({
+                await addDoc(collection(db, "posts"), {
                     title: t, body: c,
                     author: userProfile.username,
                     authorPic: userProfile.pic, 
                     authorRole: userProfile.role,
-                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                    timestamp: serverTimestamp()
                 });
                 document.getElementById('post-t').value = "";
                 document.getElementById('post-c').value = "";
@@ -345,12 +344,12 @@
             `;
         }
 
-        auth.onAuthStateChanged(async user => {
+        onAuthStateChanged(auth, async (user) => {
             const authScr = document.getElementById('auth-screen');
             const appScr = document.getElementById('app-screen');
             if(user) {
-                const doc = await db.collection("users").doc(user.uid).get();
-                userProfile = doc.data();
+                const userDoc = await getDoc(doc(db, "users", user.uid));
+                userProfile = userDoc.data();
                 authScr.classList.add('hidden');
                 appScr.classList.remove('hidden');
                 showTab('feed');
@@ -360,7 +359,15 @@
             }
         });
 
-        function logout() { if(confirm("Terminate Uplink?")) auth.signOut(); }
+        document.getElementById('btn-auth').addEventListener('click', handleAuth);
+        document.getElementById('toggle-auth-btn').addEventListener('click', toggleAuth);
+        document.getElementById('logout-btn').addEventListener('click', () => { if(confirm("Terminate?")) signOut(auth); });
+        document.getElementById('l-feed').addEventListener('click', () => showTab('feed'));
+        document.getElementById('l-create').addEventListener('click', () => showTab('create'));
+        document.getElementById('l-profile').addEventListener('click', () => showTab('profile'));
+        document.getElementById('btn-publish').addEventListener('click', publishPost);
+        document.getElementById('search-bar').addEventListener('input', (e) => loadPosts(e.target.value));
+
     </script>
 </body>
 </html>
