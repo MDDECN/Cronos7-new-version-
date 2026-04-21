@@ -19,7 +19,7 @@
             --error: #ff4444;
         }
 
-        * { box-sizing: border-box; transition: all 0.25s ease-out; }
+        * { box-sizing: border-box; transition: background 0.2s, transform 0.2s; }
 
         body { 
             margin: 0; background: var(--bg); color: var(--text); 
@@ -61,13 +61,20 @@
         }
 
         .main-content { margin-left: 280px; padding: 40px; min-height: 100vh; }
-        .container { max-width: 900px; margin: 0 auto; }
+        .container { max-width: 800px; margin: 0 auto; }
 
         .card { 
             background: var(--panel); backdrop-filter: blur(10px);
             border: 1px solid var(--border); border-radius: 20px; 
-            padding: 25px; margin-bottom: 25px;
+            padding: 25px; width: 100%;
             box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+        }
+
+        #feed-container {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            margin-top: 20px;
         }
 
         .input-node { 
@@ -82,29 +89,29 @@
             border-radius: 12px; font-weight: 800; cursor: pointer; width: 100%;
             font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px;
         }
-        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 5px 20px var(--primary-glow); opacity: 0.9; }
-        .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 5px 20px var(--primary-glow); }
 
         .post-card { 
             animation: reveal 0.4s ease-out forwards;
-            border-left: 2px solid var(--primary);
+            border-left: 3px solid var(--primary);
+            position: relative;
         }
         
         @keyframes reveal { 
-            from { opacity: 0; transform: translateY(20px); } 
+            from { opacity: 0; transform: translateY(15px); } 
             to { opacity: 1; transform: translateY(0); } 
         }
 
-        .avatar { width: 45px; height: 45px; border-radius: 10px; border: 1px solid var(--primary); }
+        .avatar { width: 45px; height: 45px; border-radius: 10px; border: 1px solid var(--primary); object-fit: cover; }
         
         @media (max-width: 850px) {
             .sidebar { 
                 width: 100%; height: 70px; bottom: 0; top: auto;
-                flex-direction: row; padding: 0 15px; border-right: none; border-top: 1px solid var(--border);
+                flex-direction: row; padding: 0 10px; border-right: none; border-top: 1px solid var(--border);
                 justify-content: space-around; border-radius: 0;
             }
             .sidebar .logo, .sidebar .logout-box { display: none; }
-            .main-content { margin-left: 0; padding: 20px 15px 100px 15px; }
+            .main-content { margin-left: 0; padding: 20px 15px 90px 15px; }
             .nav-link span { display: none; }
         }
     </style>
@@ -114,7 +121,7 @@
     <canvas id="particle-canvas"></canvas>
 
     <div id="auth-screen" style="min-height:100vh; display:flex; align-items:center; justify-content:center; padding: 20px;">
-        <div class="card" style="width:100%; max-width:400px;">
+        <div class="card" style="max-width:400px;">
             <div class="logo">CRONOS<span>7</span></div>
             <div id="reg-fields" class="hidden">
                 <input type="text" id="reg-user" class="input-node" placeholder="Researcher Alias">
@@ -184,14 +191,8 @@
         const canvas = document.getElementById('particle-canvas');
         const ctx = canvas.getContext('2d');
         let particles = [];
-
-        function resize() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        }
-        window.addEventListener('resize', resize);
-        resize();
-
+        function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+        window.addEventListener('resize', resize); resize();
         class Particle {
             constructor() { this.init(); }
             init() {
@@ -202,33 +203,21 @@
                 this.speedY = (Math.random() - 0.5) * 0.3;
             }
             update() {
-                this.x += this.speedX;
-                this.y += this.speedY;
+                this.x += this.speedX; this.y += this.speedY;
                 if (this.x > canvas.width || this.x < 0 || this.y > canvas.height || this.y < 0) this.init();
             }
             draw() {
-                ctx.fillStyle = '#00e5ff';
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fill();
+                ctx.fillStyle = '#00e5ff'; ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill();
             }
         }
-
-        for (let i = 0; i < 60; i++) particles.push(new Particle());
-
+        for (let i = 0; i < 50; i++) particles.push(new Particle());
         function animate() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             particles.forEach(p => { p.update(); p.draw(); });
             requestAnimationFrame(animate);
         }
         animate();
-
-        function toggleAuth() {
-            isReg = !isReg;
-            document.getElementById('reg-fields').classList.toggle('hidden', !isReg);
-            document.getElementById('btn-auth').innerText = isReg ? "Create Node" : "Initialize Connection";
-            document.getElementById('auth-toggle-text').innerText = isReg ? "Sign In" : "Register";
-        }
 
         function showTab(t) {
             ['feed', 'create', 'profile'].forEach(id => {
@@ -244,10 +233,10 @@
             const btn = document.getElementById('btn-auth');
             const email = document.getElementById('auth-email').value;
             const pass = document.getElementById('auth-pass').value;
-            if(!email || !pass) return;
+            if(!email || !pass) return alert("Missing credentials");
             
             btn.disabled = true;
-            btn.innerText = "Syncing...";
+            btn.innerText = "Processing...";
             
             try {
                 if(isReg) {
@@ -265,15 +254,16 @@
                     await signInWithEmailAndPassword(auth, email, pass);
                 }
             } catch (err) { 
-                alert("Auth Error: " + err.message); 
+                alert("Error: " + err.message); 
+            } finally {
                 btn.disabled = false;
-                btn.innerText = "Retry";
+                btn.innerText = isReg ? "Create Node" : "Initialize Connection";
             }
         }
 
         function loadPosts(filter = "") {
             const container = document.getElementById('feed-container');
-            const q = query(collection(db, "posts"), orderBy("timestamp", "desc"), limit(20));
+            const q = query(collection(db, "posts"), orderBy("timestamp", "desc"), limit(30));
             
             onSnapshot(q, (snap) => {
                 container.innerHTML = "";
@@ -288,11 +278,11 @@
                             <img src="${p.authorPic}" class="avatar">
                             <div>
                                 <div style="font-weight:700; font-size:0.9rem;">${p.author}</div>
-                                <div style="font-size:0.65rem; color:var(--primary); letter-spacing:1px;">${p.authorRole}</div>
+                                <div style="font-size:0.65rem; color:var(--primary); text-transform:uppercase;">${p.authorRole}</div>
                             </div>
                         </div>
                         <div style="font-weight:800; margin-bottom:8px; color:var(--primary); font-family:'JetBrains Mono'">${p.title}</div>
-                        <div style="color:#bbb; font-size:0.95rem;">${p.body}</div>
+                        <div style="color:#bbb; font-size:0.95rem; white-space: pre-wrap;">${p.body}</div>
                     `;
                     container.appendChild(card);
                 });
@@ -302,14 +292,15 @@
         async function publishPost() {
             const t = document.getElementById('post-t').value;
             const c = document.getElementById('post-c').value;
-            if(!t || !c) return;
+            if(!t || !c) return alert("Payload incomplete");
             
             const btn = document.getElementById('btn-publish');
             btn.disabled = true;
             
             try {
                 await addDoc(collection(db, "posts"), {
-                    title: t, body: c,
+                    title: t, 
+                    body: c,
                     author: userProfile.username,
                     authorPic: userProfile.pic, 
                     authorRole: userProfile.role,
@@ -330,38 +321,31 @@
                     <img src="${userProfile.pic}" style="width:100px; border-radius:20px; border:2px solid var(--primary); margin-bottom:20px;">
                     <h2 style="margin:0;">${userProfile.username}</h2>
                     <p style="color:var(--primary); font-size:0.8rem; letter-spacing:3px;">${userProfile.role}</p>
-                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top:30px;">
-                        <div style="background:rgba(255,255,255,0.03); padding:15px; border-radius:12px;">
-                            <small style="color:var(--text-dim)">UPLINK</small>
-                            <div style="color:#00ff88; font-weight:700">STABLE</div>
-                        </div>
-                        <div style="background:rgba(255,255,255,0.03); padding:15px; border-radius:12px;">
-                            <small style="color:var(--text-dim)">REGION</small>
-                            <div style="font-weight:700">NODE-07</div>
-                        </div>
-                    </div>
                 </div>
             `;
         }
 
         onAuthStateChanged(auth, async (user) => {
-            const authScr = document.getElementById('auth-screen');
-            const appScr = document.getElementById('app-screen');
             if(user) {
                 const userDoc = await getDoc(doc(db, "users", user.uid));
                 userProfile = userDoc.data();
-                authScr.classList.add('hidden');
-                appScr.classList.remove('hidden');
+                document.getElementById('auth-screen').classList.add('hidden');
+                document.getElementById('app-screen').classList.remove('hidden');
                 showTab('feed');
             } else {
-                authScr.classList.remove('hidden');
-                appScr.classList.add('hidden');
+                document.getElementById('auth-screen').classList.remove('hidden');
+                document.getElementById('app-screen').classList.add('hidden');
             }
         });
 
         document.getElementById('btn-auth').addEventListener('click', handleAuth);
-        document.getElementById('toggle-auth-btn').addEventListener('click', toggleAuth);
-        document.getElementById('logout-btn').addEventListener('click', () => { if(confirm("Terminate?")) signOut(auth); });
+        document.getElementById('toggle-auth-btn').addEventListener('click', () => {
+            isReg = !isReg;
+            document.getElementById('reg-fields').classList.toggle('hidden', !isReg);
+            document.getElementById('btn-auth').innerText = isReg ? "Create Node" : "Initialize Connection";
+            document.getElementById('auth-toggle-text').innerText = isReg ? "Sign In" : "Register";
+        });
+        document.getElementById('logout-btn').addEventListener('click', () => signOut(auth));
         document.getElementById('l-feed').addEventListener('click', () => showTab('feed'));
         document.getElementById('l-create').addEventListener('click', () => showTab('create'));
         document.getElementById('l-profile').addEventListener('click', () => showTab('profile'));
