@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>CRONOS 7 | Advanced Research Network</title>
-    
+
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-    
+
     <style>
         :root { 
             --primary: #00e5ff; 
@@ -17,6 +17,7 @@
             --text-dim: #707070;
             --border: rgba(0, 229, 255, 0.15); 
             --error: #ff4444;
+            --kofi: #29abe0;
         }
 
         * { box-sizing: border-box; transition: background 0.2s, transform 0.2s; }
@@ -60,6 +61,44 @@
             box-shadow: inset 0 0 10px rgba(0, 229, 255, 0.1);
         }
 
+        .funding-box {
+            margin-top: 30px;
+            padding: 15px;
+            background: rgba(41, 171, 224, 0.05);
+            border: 1px dashed var(--kofi);
+            border-radius: 16px;
+            text-align: center;
+        }
+
+        .btn-kofi {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: var(--kofi);
+            color: #fff;
+            text-decoration: none;
+            padding: 12px;
+            border-radius: 10px;
+            font-weight: 800;
+            margin-top: 10px;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            box-shadow: 0 4px 15px rgba(41, 171, 224, 0.2);
+        }
+
+        .btn-kofi:hover { transform: translateY(-2px); filter: brightness(1.1); }
+
+        .cause-tag {
+            font-size: 0.65rem;
+            color: var(--primary);
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: block;
+            margin-bottom: 5px;
+        }
+
         .main-content { margin-left: 280px; padding: 40px; min-height: 100vh; }
         .container { max-width: 800px; margin: 0 auto; }
 
@@ -70,12 +109,7 @@
             box-shadow: 0 15px 35px rgba(0,0,0,0.4);
         }
 
-        #feed-container {
-            display: flex;
-            flex-direction: column;
-            gap: 25px;
-            margin-top: 20px;
-        }
+        #feed-container { display: flex; flex-direction: column; gap: 25px; margin-top: 20px; }
 
         .input-node { 
             width: 100%; background: rgba(0, 0, 0, 0.3); border: 1px solid var(--border); 
@@ -91,26 +125,22 @@
         }
         .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 5px 20px var(--primary-glow); }
 
-        .post-card { 
-            animation: reveal 0.4s ease-out forwards;
-            border-left: 3px solid var(--primary);
-            position: relative;
-        }
-        
+        .post-card { animation: reveal 0.4s ease-out forwards; border-left: 3px solid var(--primary); }
+
         @keyframes reveal { 
             from { opacity: 0; transform: translateY(15px); } 
             to { opacity: 1; transform: translateY(0); } 
         }
 
         .avatar { width: 45px; height: 45px; border-radius: 10px; border: 1px solid var(--primary); object-fit: cover; }
-        
+
         @media (max-width: 850px) {
             .sidebar { 
-                width: 100%; height: 70px; bottom: 0; top: auto;
-                flex-direction: row; padding: 0 10px; border-right: none; border-top: 1px solid var(--border);
-                justify-content: space-around; border-radius: 0;
+                width: 100%; height: auto; bottom: 0; top: auto;
+                flex-direction: row; padding: 10px; border-right: none; border-top: 1px solid var(--border);
+                justify-content: space-around; border-radius: 0; flex-wrap: wrap;
             }
-            .sidebar .logo, .sidebar .logout-box { display: none; }
+            .sidebar .logo, .sidebar .logout-box, .sidebar .funding-box { display: none; }
             .main-content { margin-left: 0; padding: 20px 15px 90px 15px; }
             .nav-link span { display: none; }
         }
@@ -138,9 +168,18 @@
     <div id="app-screen" class="hidden">
         <nav class="sidebar">
             <div class="logo">CRONOS<span>7</span></div>
-            <div class="nav-link active" id="l-feed"><span>Stream</span></div>
-            <div class="nav-link" id="l-create"><span>Broadcast</span></div>
-            <div class="nav-link" id="l-profile"><span>Station</span></div>
+            <div class="nav-link active" id="l-feed">🚀 <span>Stream</span></div>
+            <div class="nav-link" id="l-create">📡 <span>Broadcast</span></div>
+            <div class="nav-link" id="l-profile">👤 <span>Station</span></div>
+
+            <div class="funding-box">
+                <span class="cause-tag">Mission Support</span>
+                <p style="margin: 0; font-size: 0.75rem; color: var(--text-dim);">Fuel our research & global aid.</p>
+                <a href="https://ko-fi.com/YOUR_USERNAME" target="_blank" class="btn-kofi">
+                    ☕ Support on Ko-fi
+                </a>
+            </div>
+
             <div class="logout-box" style="margin-top:auto; width: 100%;">
                 <button id="logout-btn" class="btn-primary" style="background:transparent; color:var(--error); border: 1px solid var(--error); font-size: 0.7rem;">DISCONNECT</button>
             </div>
@@ -234,17 +273,15 @@
             const email = document.getElementById('auth-email').value;
             const pass = document.getElementById('auth-pass').value;
             if(!email || !pass) return alert("Missing credentials");
-            
             btn.disabled = true;
             btn.innerText = "Processing...";
-            
             try {
                 if(isReg) {
                     const user = document.getElementById('reg-user').value.trim() || "Researcher";
                     const res = await createUserWithEmailAndPassword(auth, email, pass);
                     const profileData = {
                         username: user,
-                        role: "Field Specialist", 
+                        role: "Network Specialist", 
                         pic: `https://api.dicebear.com/7.x/identicon/svg?seed=${user}`,
                         createdAt: serverTimestamp()
                     };
@@ -253,9 +290,8 @@
                 } else {
                     await signInWithEmailAndPassword(auth, email, pass);
                 }
-            } catch (err) { 
-                alert("Error: " + err.message); 
-            } finally {
+            } catch (err) { alert("Error: " + err.message); } 
+            finally {
                 btn.disabled = false;
                 btn.innerText = isReg ? "Create Node" : "Initialize Connection";
             }
@@ -264,13 +300,11 @@
         function loadPosts(filter = "") {
             const container = document.getElementById('feed-container');
             const q = query(collection(db, "posts"), orderBy("timestamp", "desc"), limit(30));
-            
             onSnapshot(q, (snap) => {
                 container.innerHTML = "";
                 snap.forEach(doc => {
                     const p = doc.data();
                     if(filter && !p.title.toLowerCase().includes(filter.toLowerCase())) return;
-
                     const card = document.createElement('div');
                     card.className = "card post-card";
                     card.innerHTML = `
@@ -293,10 +327,8 @@
             const t = document.getElementById('post-t').value;
             const c = document.getElementById('post-c').value;
             if(!t || !c) return alert("Payload incomplete");
-            
             const btn = document.getElementById('btn-publish');
             btn.disabled = true;
-            
             try {
                 await addDoc(collection(db, "posts"), {
                     title: t, 
